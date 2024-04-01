@@ -1,6 +1,6 @@
 from random import uniform
 
-from Sensors.BaseSensor import Sensor
+from FakeSensors.BaseSensor import Sensor
 
 # class Sensor(ABC, object):
 #     def __init__(self) -> None:
