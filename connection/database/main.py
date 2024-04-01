@@ -36,7 +36,6 @@ def main():
         )
 
         print(f'Writing {point.to_line_protocol()}')
-        break
         write_api.write(bucket=bucket, org=org, record=point)
         time.sleep(1)
 
