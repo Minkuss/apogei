@@ -5,7 +5,7 @@ import Adafruit_BMP.BMP085
 import Adafruit_DHT
 import datetime
 import smbus
-import time
+# import time
 
 
 class DateTimeSensor:
@@ -33,7 +33,6 @@ class PressureSensor:
 
 class HumiditySensor:
     def __init__(self) -> None:
-        """used board pin GPIO14"""
         self.dht_sensor = Adafruit_DHT.DHT22
         self.dht_pin = 14
 
@@ -98,7 +97,7 @@ class DataPacker:
     def get_datetime(self) -> datetime.datetime:
         return self.time_sensor.get_sensor_status()
 
-    def get_package(self) -> [(str(), float)]:
+    def get_package(self) -> [("", float)]:
         return [("Pressure", self.pressure_sensor.get_pressure_sensor_status()),
                 ("Humidity", self.humidity_sensor.get_humidity_sensor_status()),
                 ("Temperature(pressure)", self.pressure_sensor.get_temperature_sensor_status()),
@@ -109,6 +108,7 @@ class DataPacker:
 
 
 if __name__ == '__main__':
+    # Uncomment to check the performance
     # packer = DataPacker()
     #
     # while True:
