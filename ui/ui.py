@@ -11,11 +11,13 @@ class myWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
+        self.ui.pushButton.clicked.connect(self.search)
 
     def print_message(self):
         QMessageBox.information(None, "Сообщение", "Егор - лох")
 
     def fill_table(self):
+        self.ui.tableWidget.clear()
         scanner1 = [
             [datetime(2024, 3, 15, 14, 20), 25],
             [datetime(2024, 3, 16, 14, 30), 29],
@@ -66,11 +68,26 @@ class myWindow(QMainWindow):
                 item = QTableWidgetItem(value)
                 self.ui.tableWidget.setItem(row, column, item)
 
-
     def remove_duplicate(self, mylist):
         return sorted(set(mylist), key=lambda x: mylist.index(x))
 
+    def search(self):
+        start_date = self.ui.dateEdit.date()
+        start_date_datetime = datetime(start_date.year(), start_date.month(), start_date.day())
+        end_date = self.ui.dateEdit_2.date()
+        end_date_datetime = datetime(end_date.year(), end_date.month(), end_date.day())
+        date = '12/05/2023'
+        date_format = '%d/%m/%Y'
+        datetime_object = datetime.strptime(date, date_format)
 
+        row_index = 0
+        while row_index < self.ui.tableWidget.rowCount():
+            date = self.ui.tableWidget.verticalHeaderItem(row_index).text()
+            date_datetime = datetime.strptime(date, date_format)
+            if (date_datetime < start_date_datetime) or (date_datetime > end_date_datetime):
+                self.ui.tableWidget.removeRow(row_index)
+            else:
+                row_index += 1
 
 
 if __name__ == "__main__":
