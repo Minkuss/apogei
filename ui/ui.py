@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
 from PySide6.QtCore import Qt
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
@@ -11,6 +11,7 @@ class myWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
+        self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
         self.ui.comboBox.addItem("Датчик 1 - температура")
         self.ui.comboBox.adjustSize()
