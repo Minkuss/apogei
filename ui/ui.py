@@ -12,6 +12,10 @@ class myWindow(QMainWindow):
         self.ui.setupUi(self)
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
         self.ui.pushButton.clicked.connect(self.search)
+        self.ui.comboBox.addItem("Датчик 1 - температура")
+        self.ui.comboBox.adjustSize()
+        self.ui.pushButton_3.clicked.connect(self.fill_table)
+
 
     def print_message(self):
         QMessageBox.information(None, "Сообщение", "Егор - лох")
