@@ -15,11 +15,16 @@ class myWindow(QMainWindow):
         self.ui.pushButton.clicked.connect(self.search)
         self.setBtnStyleSheet()
         self.setTableWidget()
+        self.ui.comboBox.addItem("Датчик 1 - температура")
+        self.ui.comboBox.adjustSize()
+        self.ui.pushButton_3.clicked.connect(self.fill_table)
+
 
     def print_message(self):
         QMessageBox.information(None, "Сообщение", "Егор - лох")
 
     def fill_table(self):
+
         self.ui.tableWidget.clear()
         scanner1 = [
             [datetime(2024, 3, 15, 14, 20), 25],

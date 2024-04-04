@@ -14,175 +14,115 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>80</y>
       <width>881</width>
-      <height>571</height>
+      <height>561</height>
      </rect>
     </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Датчик 1</string>
-     </attribute>
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>871</width>
-        <height>561</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Датчик 2</string>
-     </attribute>
-     <widget class="QTableWidget" name="tableWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>871</width>
-        <height>561</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Датчик 3</string>
-     </attribute>
-     <widget class="QTableWidget" name="tableWidget_3">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>871</width>
-        <height>561</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Датчик 4</string>
-     </attribute>
-     <widget class="QTableWidget" name="tableWidget_4">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>871</width>
-        <height>561</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Датчик 5</string>
-     </attribute>
-     <widget class="QTableWidget" name="tableWidget_5">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>871</width>
-        <height>561</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>0</y>
-      <width>471</width>
-      <height>41</height>
+      <x>20</x>
+      <y>8</y>
+      <width>381</width>
+      <height>60</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
-        <string>Обновить</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QPushButton" name="pushButton_2">
          <property name="text">
-          <string>От</string>
+          <string>Обновить</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QDateEdit" name="dateEdit">
-         <property name="dateTime">
-          <datetime>
-           <hour>0</hour>
-           <minute>0</minute>
-           <second>0</second>
-           <year>2024</year>
-           <month>1</month>
-           <day>1</day>
-          </datetime>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Найти</string>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="comboBox"/>
        </item>
       </layout>
      </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>671</x>
-      <y>40</y>
-      <width>231</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>До</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDateEdit" name="dateEdit_2">
-       <property name="dateTime">
-        <datetime>
-         <hour>0</hour>
-         <minute>0</minute>
-         <second>0</second>
-         <year>2024</year>
-         <month>4</month>
-         <day>3</day>
-        </datetime>
-       </property>
-      </widget>
+     <item row="0" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>От</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDateEdit" name="dateEdit">
+             <property name="dateTime">
+              <datetime>
+               <hour>4</hour>
+               <minute>0</minute>
+               <second>0</second>
+               <year>2023</year>
+               <month>12</month>
+               <day>31</day>
+              </datetime>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>До</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDateEdit" name="dateEdit_2">
+             <property name="dateTime">
+              <datetime>
+               <hour>4</hour>
+               <minute>0</minute>
+               <second>0</second>
+               <year>2024</year>
+               <month>4</month>
+               <day>2</day>
+              </datetime>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Найти</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="text">
+            <string>Сброс поиска</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>

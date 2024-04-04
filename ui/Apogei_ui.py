@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDateEdit, QHBoxLayout, QHeaderView,
-    QLabel, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QTabWidget, QTableWidget,
-    QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QGridLayout,
+    QHBoxLayout, QHeaderView, QLabel, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -30,87 +30,86 @@ class Ui_MainWindow(object):
         self.action.setObjectName(u"action")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.tabWidget = QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName(u"tabWidget")
-        self.tabWidget.setGeometry(QRect(20, 50, 881, 571))
-        self.tab = QWidget()
-        self.tab.setObjectName(u"tab")
-        self.tableWidget = QTableWidget(self.tab)
+        self.tableWidget = QTableWidget(self.centralwidget)
         self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setGeometry(QRect(10, 10, 871, 561))
-        self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QWidget()
-        self.tab_2.setObjectName(u"tab_2")
-        self.tableWidget_2 = QTableWidget(self.tab_2)
-        self.tableWidget_2.setObjectName(u"tableWidget_2")
-        self.tableWidget_2.setGeometry(QRect(10, 10, 871, 561))
-        self.tabWidget.addTab(self.tab_2, "")
-        self.tab_3 = QWidget()
-        self.tab_3.setObjectName(u"tab_3")
-        self.tableWidget_3 = QTableWidget(self.tab_3)
-        self.tableWidget_3.setObjectName(u"tableWidget_3")
-        self.tableWidget_3.setGeometry(QRect(10, 10, 871, 561))
-        self.tabWidget.addTab(self.tab_3, "")
-        self.tab_4 = QWidget()
-        self.tab_4.setObjectName(u"tab_4")
-        self.tableWidget_4 = QTableWidget(self.tab_4)
-        self.tableWidget_4.setObjectName(u"tableWidget_4")
-        self.tableWidget_4.setGeometry(QRect(10, 10, 871, 561))
-        self.tabWidget.addTab(self.tab_4, "")
-        self.tab_5 = QWidget()
-        self.tab_5.setObjectName(u"tab_5")
-        self.tableWidget_5 = QTableWidget(self.tab_5)
-        self.tableWidget_5.setObjectName(u"tableWidget_5")
-        self.tableWidget_5.setGeometry(QRect(10, 10, 871, 561))
-        self.tabWidget.addTab(self.tab_5, "")
-        self.layoutWidget = QWidget(self.centralwidget)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(430, 0, 471, 41))
-        self.horizontalLayout_2 = QHBoxLayout(self.layoutWidget)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_2 = QPushButton(self.layoutWidget)
+        self.tableWidget.setGeometry(QRect(20, 80, 881, 561))
+        self.widget = QWidget(self.centralwidget)
+        self.widget.setObjectName(u"widget")
+        self.widget.setGeometry(QRect(20, 8, 381, 60))
+        self.gridLayout = QGridLayout(self.widget)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.pushButton_2 = QPushButton(self.widget)
         self.pushButton_2.setObjectName(u"pushButton_2")
 
-        self.horizontalLayout_2.addWidget(self.pushButton_2)
+        self.verticalLayout_3.addWidget(self.pushButton_2)
+
+        self.comboBox = QComboBox(self.widget)
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.verticalLayout_3.addWidget(self.comboBox)
+
+
+        self.gridLayout.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label = QLabel(self.widget)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout_2.addWidget(self.label)
+
+        self.dateEdit = QDateEdit(self.widget)
+        self.dateEdit.setObjectName(u"dateEdit")
+        self.dateEdit.setDateTime(QDateTime(QDate(2023, 12, 31), QTime(4, 0, 0)))
+
+        self.horizontalLayout_2.addWidget(self.dateEdit)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.label = QLabel(self.layoutWidget)
-        self.label.setObjectName(u"label")
-
-        self.horizontalLayout.addWidget(self.label)
-
-        self.dateEdit = QDateEdit(self.layoutWidget)
-        self.dateEdit.setObjectName(u"dateEdit")
-        self.dateEdit.setDateTime(QDateTime(QDate(2024, 1, 1), QTime(0, 0, 0)))
-
-        self.horizontalLayout.addWidget(self.dateEdit)
-
-        self.pushButton = QPushButton(self.layoutWidget)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.horizontalLayout.addWidget(self.pushButton)
-
-
-        self.horizontalLayout_2.addLayout(self.horizontalLayout)
-
-        self.layoutWidget_2 = QWidget(self.centralwidget)
-        self.layoutWidget_2.setObjectName(u"layoutWidget_2")
-        self.layoutWidget_2.setGeometry(QRect(671, 40, 231, 26))
-        self.horizontalLayout_3 = QHBoxLayout(self.layoutWidget_2)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.label_2 = QLabel(self.layoutWidget_2)
+        self.label_2 = QLabel(self.widget)
         self.label_2.setObjectName(u"label_2")
 
-        self.horizontalLayout_3.addWidget(self.label_2)
+        self.horizontalLayout.addWidget(self.label_2)
 
-        self.dateEdit_2 = QDateEdit(self.layoutWidget_2)
+        self.dateEdit_2 = QDateEdit(self.widget)
         self.dateEdit_2.setObjectName(u"dateEdit_2")
-        self.dateEdit_2.setDateTime(QDateTime(QDate(2024, 4, 3), QTime(0, 0, 0)))
+        self.dateEdit_2.setDateTime(QDateTime(QDate(2024, 4, 2), QTime(4, 0, 0)))
 
-        self.horizontalLayout_3.addWidget(self.dateEdit_2)
+        self.horizontalLayout.addWidget(self.dateEdit_2)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout)
+
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.pushButton = QPushButton(self.widget)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout_2.addWidget(self.pushButton)
+
+        self.pushButton_3 = QPushButton(self.widget)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+
+        self.verticalLayout_2.addWidget(self.pushButton_3)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout_2)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_3, 0, 1, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -125,24 +124,17 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
-
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u0442\u0435\u043c\u0443", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0447\u0438\u043a 1", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0447\u0438\u043a 2", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0447\u0438\u043a 3", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0447\u0438\u043a 4", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0447\u0438\u043a 5", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0442", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0439\u0442\u0438", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0439\u0442\u0438", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0431\u0440\u043e\u0441 \u043f\u043e\u0438\u0441\u043a\u0430", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438", None))
     # retranslateUi
 
