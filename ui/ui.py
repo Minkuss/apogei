@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidg
 from PySide6.QtCore import Qt
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
+import styleSheet
 
 
 class myWindow(QMainWindow):
@@ -12,6 +13,8 @@ class myWindow(QMainWindow):
         self.ui.setupUi(self)
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
         self.ui.pushButton.clicked.connect(self.search)
+        self.setBtnStyleSheet()
+        self.setTableWidget()
 
     def print_message(self):
         QMessageBox.information(None, "Сообщение", "Егор - лох")
@@ -89,6 +92,12 @@ class myWindow(QMainWindow):
             else:
                 row_index += 1
 
+    def setBtnStyleSheet(self) -> None:
+        self.ui.pushButton.setStyleSheet(styleSheet.getBtnStyleSheet(styleSheet.Theame.Dark))
+        self.ui.pushButton_2.setStyleSheet(styleSheet.getBtnStyleSheet(styleSheet.Theame.Dark))
+
+    def setTableWidget(self) -> None:
+        self.ui.tableWidget.setStyleSheet((styleSheet.getTableWidgetStyleSheet(styleSheet.Theame.Dark)))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
