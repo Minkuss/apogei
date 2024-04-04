@@ -1,15 +1,18 @@
-import board
-import busio
-import adafruit_ds3231
+import datetime
+# import time
 import Adafruit_BMP.BMP085
 import Adafruit_DHT
-import datetime
+import adafruit_ds3231
+import board
+import busio
 import smbus
-# import time
 
 
 class DateTimeSensor:
+    """Class for datetime sensor."""
+
     def __init__(self) -> None:
+        """Connect to the boards pins."""
         self.ds3231 = adafruit_ds3231.DS3231(busio.I2C(board.SCL, board.SDA))
         self.__set_time()
 
@@ -17,36 +20,50 @@ class DateTimeSensor:
         self.ds3231.datetime = datetime.datetime.now().timetuple()
 
     def get_sensor_status(self) -> datetime.datetime:
+        """Get current time from sensor."""
         return self.ds3231.datetime
 
 
 class PressureSensor:
+    """Class for pressure sensor."""
+
     def __init__(self) -> None:
+        """Connect to the boards pins."""
         self.bmp = Adafruit_BMP.BMP085.BMP085()
 
     def get_pressure_sensor_status(self) -> float:
+        """Get pressure from sensor."""
         return float(self.bmp.read_pressure())
 
     def get_temperature_sensor_status(self) -> float:
+        """Get temperature from sensor."""
         return float(self.bmp.read_temperature())
 
 
 class HumiditySensor:
+    """Class for humidity sensor."""
+
     def __init__(self) -> None:
+        """Connect to the boards pins."""
         self.dht_sensor = Adafruit_DHT.DHT22
         self.dht_pin = 14
 
     def get_humidity_sensor_status(self) -> float:
+        """Get humidity from sensor."""
         humidity, temperature = Adafruit_DHT.read_retry(self.dht_sensor, self.dht_pin)
         return float(humidity)
 
     def get_temperature_sensor_status(self) -> float:
+        """Get temperature from sensor."""
         humidity, temperature = Adafruit_DHT.read_retry(self.dht_sensor, self.dht_pin)
         return float(temperature)
 
 
 class IlluminationSensor:
+    """Class for illumination sensor."""
+
     def __init__(self) -> None:
+        """Set board address with sensor."""
         # Get I2C bus
         self.bus = smbus.SMBus(1)
 
@@ -65,6 +82,7 @@ class IlluminationSensor:
         return [data, data1]
 
     def get_full_spectrum(self) -> float:
+        """Get full light spectrum."""
         data, data1 = self.__read_data()
 
         # Convert the data
@@ -72,6 +90,7 @@ class IlluminationSensor:
         return float(ch0)
 
     def get_infrared_spectrum(self) -> float:
+        """Get infrared light spectrum."""
         data, data1 = self.__read_data()
 
         # Convert the data
@@ -79,6 +98,7 @@ class IlluminationSensor:
         return float(ch1)
 
     def get_visible_spectrum(self) -> float:
+        """Get visible light spectrum."""
         data, data1 = self.__read_data()
 
         # Convert the data
@@ -88,23 +108,28 @@ class IlluminationSensor:
 
 
 class DataPacker:
+    """Class for packing sensors data for DB."""
+
     def __init__(self) -> None:
+        """Connect to the sensors."""
         self.time_sensor = DateTimeSensor()
         self.pressure_sensor = PressureSensor()
         self.humidity_sensor = HumiditySensor()
         self.lux_sensor = IlluminationSensor()
 
     def get_datetime(self) -> datetime.datetime:
+        """Get current time from sensor."""
         return self.time_sensor.get_sensor_status()
 
-    def get_package(self) -> [("", float)]:
-        return [("Pressure", self.pressure_sensor.get_pressure_sensor_status()),
-                ("Humidity", self.humidity_sensor.get_humidity_sensor_status()),
-                ("Temperature(pressure)", self.pressure_sensor.get_temperature_sensor_status()),
-                ("Temperature(humidity)", self.humidity_sensor.get_temperature_sensor_status()),
-                ("Full spectrum", self.lux_sensor.get_full_spectrum()),
-                ("Infrared spectrum", self.lux_sensor.get_infrared_spectrum()),
-                ("Visible spectrum", self.lux_sensor.get_visible_spectrum())]
+    def get_package(self) -> [(str, float)]:
+        """Get package with sensors data."""
+        return [('Pressure', self.pressure_sensor.get_pressure_sensor_status()),
+                ('Humidity', self.humidity_sensor.get_humidity_sensor_status()),
+                ('Temperature(pressure)', self.pressure_sensor.get_temperature_sensor_status()),
+                ('Temperature(humidity)', self.humidity_sensor.get_temperature_sensor_status()),
+                ('Full spectrum', self.lux_sensor.get_full_spectrum()),
+                ('Infrared spectrum', self.lux_sensor.get_infrared_spectrum()),
+                ('Visible spectrum', self.lux_sensor.get_visible_spectrum())]
 
 
 if __name__ == '__main__':
