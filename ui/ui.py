@@ -21,6 +21,7 @@ class myWindow(QMainWindow):
         QMessageBox.information(None, "Сообщение", "Егор - лох")
 
     def fill_table(self):
+
         self.ui.tableWidget.clear()
         scanner1 = [
             [datetime(2024, 3, 15, 14, 20), 25],
