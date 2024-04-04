@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
 from PySide6.QtCore import Qt
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
@@ -12,9 +12,12 @@ class myWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
+        self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
         self.setBtnStyleSheet()
         self.setTableWidget()
+        self.setComboBox()
+        self.setDatePicker()
         self.ui.comboBox.addItem("Датчик 1 - температура")
         self.ui.comboBox.adjustSize()
         self.ui.pushButton_3.clicked.connect(self.fill_table)
@@ -99,9 +102,20 @@ class myWindow(QMainWindow):
     def setBtnStyleSheet(self) -> None:
         self.ui.pushButton.setStyleSheet(styleSheet.getBtnStyleSheet(styleSheet.Theame.Dark))
         self.ui.pushButton_2.setStyleSheet(styleSheet.getBtnStyleSheet(styleSheet.Theame.Dark))
+        self.ui.pushButton_3.setStyleSheet((styleSheet.getBtnStyleSheet((styleSheet.Theame.Dark))))
 
     def setTableWidget(self) -> None:
-        self.ui.tableWidget.setStyleSheet((styleSheet.getTableWidgetStyleSheet(styleSheet.Theame.Dark)))
+        self.ui.tableWidget.setStyleSheet(styleSheet.getTableWidgetStyleSheet(styleSheet.Theame.Dark))
+
+    def setComboBox(self) -> None:
+        self.ui.comboBox.setStyleSheet(styleSheet.getComboBoxStyleSheet(styleSheet.Theame.Dark))
+
+    def setDatePicker(self) -> None:
+        self.ui.dateEdit.setStyleSheet(styleSheet.getDatePickerStyleSheet(styleSheet.Theame.Dark))
+        self.ui.dateEdit_2.setStyleSheet(styleSheet.getDatePickerStyleSheet(styleSheet.Theame.Dark))
+
+    def setMainWindow(self ) -> None:
+        self.ui.centralwidget.setStyleSheet(styleSheet.getMenuStyleSheet(styleSheet.Theame.Dark))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
