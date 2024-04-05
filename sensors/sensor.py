@@ -1,5 +1,5 @@
 import datetime
-# import time
+import time
 import Adafruit_BMP.BMP085
 import Adafruit_DHT
 import adafruit_ds3231
@@ -21,7 +21,7 @@ class DateTimeSensor:
 
     def get_sensor_status(self) -> datetime.datetime:
         """Get current time from sensor."""
-        return self.ds3231.datetime
+        return datetime.datetime.fromtimestamp(time.mktime(self.ds3231.datetime))
 
 
 class PressureSensor:
