@@ -11,7 +11,7 @@ class Database(object):
         if not dbname.endswith(".db"):
             dbname += ".db"
 
-        self.__engine = create_engine(f'sqlite:///{dbname}', echo=True)
+        self.__engine = create_engine(f'sqlite:///{dbname}', echo=False)
 
         self.__metadata = MetaData()
         Table('sensors', self.__metadata,
