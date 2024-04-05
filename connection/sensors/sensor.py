@@ -138,7 +138,7 @@ def get_bd_package(self) -> [datetime.datetime, float]:
             self.pressure_sensor.get_pressure_sensor_status(),
             self.humidity_sensor.get_humidity_sensor_status(),
             (self.pressure_sensor.get_temperature_sensor_status() +
-            self.humidity_sensor.get_temperature_sensor_status()) / 2,
+            + self.humidity_sensor.get_temperature_sensor_status()) / 2,
             self.lux_sensor.get_full_spectrum(),
             self.lux_sensor.get_infrared_spectrum(),
             self.lux_sensor.get_visible_spectrum()]
