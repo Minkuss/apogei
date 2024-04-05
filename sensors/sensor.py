@@ -151,8 +151,8 @@ def main() -> None:
     while True:
         datetime = packer.get_datetime()
         package = packer.get_package()
-        print("Время: {}:{}:{}".format(datetime.tm_hour, datetime.tm_min, datetime.tm_sec))
-        print("Дата: {}-{}-{}".format(datetime.tm_year, datetime.tm_mon, datetime.tm_mday))
+        print('Время: {}:{}:{}'.format(datetime.tm_hour, datetime.tm_min, datetime.tm_sec))
+        print('Дата: {}-{}-{}'.format(datetime.tm_year, datetime.tm_mon, datetime.tm_mday))
         for data in package:
             print(*data)
         print()
