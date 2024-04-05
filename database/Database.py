@@ -1,7 +1,8 @@
 import datetime
 
 import sqlalchemy
-from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert
+from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 
@@ -43,6 +44,24 @@ class Database(object):
             except exc.SQLAlchemyError as e:
                 print(e.args)
                 conn.rollback()
+
+    def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
+        start_time = end_time - datetime.timedelta(minutes=minutes_diff)
+        query = select(self.__sensors).where(self.__sensors.c["timestamp"] <= end_time,
+                                             self.__sensors.c["timestamp"] >= start_time)
+        print(query)
+        with self.__engine.connect() as conn:
+            try:
+                result = conn.execute(query)
+                return result
+            except exc.SQLAlchemyError as e:
+                print(e.args)
+
+    def select_all(self):
+        session = sessionmaker(bind=self.__engine)()
+        query = session.query(self.__sensors).all()
+        session.close()
+        return query
 
 
 def main() -> None:
