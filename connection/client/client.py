@@ -3,9 +3,8 @@ import hashlib
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization, padding
-import threading
-
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 12345
@@ -21,8 +20,8 @@ private_key = parameters.generate_private_key()
 public_key = private_key.public_key()
 
 
-# Perform key exchange and derive shared key
-def perform_key_exchange(conn):
+def perform_key_exchange(conn: socket) -> bytes:
+    """Perform key exchange and derive shared key."""
     # Serialize public key
     public_key_bytes = public_key.public_bytes(
         encoding=serialization.Encoding.DER,
@@ -39,19 +38,21 @@ def perform_key_exchange(conn):
         backend=default_backend()
     )
 
-    print("Server public key: " + str(server_public_key))
+    print('Server public key: ' + str(server_public_key))
 
     # Perform key exchange
     shared_key = private_key.exchange(server_public_key)
 
     return shared_key
 
-# Generate fixed-length key from shared key
-def derive_key(shared_key):
+
+def derive_key(shared_key: bytes) -> bytes:
+    """Generate fixed-length key from shared key."""
     return hashlib.sha256(shared_key).digest()
 
-# Encrypt message
-def encrypt_message(message, key):
+
+def encrypt_message(message: bytes, key: bytes) -> bytes:
+    """Encrypt message."""
     key = derive_key(key)
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
     encryptor = cipher.encryptor()
@@ -59,8 +60,9 @@ def encrypt_message(message, key):
     padded_data = padder.update(message) + padder.finalize()
     return encryptor.update(padded_data) + encryptor.finalize()
 
-# Decrypt message
-def decrypt_message(encrypted_message, key):
+
+def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
+    """Decrypt message."""
     key = derive_key(key)
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
     decryptor = cipher.decryptor()
@@ -68,21 +70,23 @@ def decrypt_message(encrypted_message, key):
     decrypted_data = decryptor.update(encrypted_message) + decryptor.finalize()
     return unpadder.update(decrypted_data) + unpadder.finalize()
 
-# Handle server connection
-def handle_server(conn):
+
+def handle_server(conn: socket) -> None:
+    """Handle server connection."""
     shared_key = perform_key_exchange(conn)
 
     # Encrypt and send message
-    message = b"Hello, server!"
+    message = b'Hello, server!'
     encrypted_message = encrypt_message(message, shared_key)
     conn.sendall(encrypted_message)
 
-# Main client loop
-def main():
+
+def main() -> None:
+    """Lopping client."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
         client_socket.connect((SERVER_HOST, SERVER_PORT))
         handle_server(client_socket)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

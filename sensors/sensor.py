@@ -144,17 +144,21 @@ def get_bd_package(self) -> [datetime.datetime, float]:
             self.lux_sensor.get_visible_spectrum()]
 
 
+def main() -> None:
+    """Lopping sensors data output."""
+    packer = DataPacker()
+
+    while True:
+        datetime = packer.get_datetime()
+        package = packer.get_package()
+        print("Время: {}:{}:{}".format(datetime.tm_hour, datetime.tm_min, datetime.tm_sec))
+        print("Дата: {}-{}-{}".format(datetime.tm_year, datetime.tm_mon, datetime.tm_mday))
+        for data in package:
+            print(*data)
+        print()
+        time.sleep(4)
+
+
 if __name__ == '__main__':
-    # Uncomment to check the performance
-    # packer = DataPacker()
-    #
-    # while True:
-    #     datetime = packer.get_datetime()
-    #     package = packer.get_package()
-    #     print("Время: {}:{}:{}".format(datetime.tm_hour, datetime.tm_min, datetime.tm_sec))
-    #     print("Дата: {}-{}-{}".format(datetime.tm_year, datetime.tm_mon, datetime.tm_mday))
-    #     for data in package:
-    #         print(*data)
-    #     print()
-    #     time.sleep(4)
+    main()
     pass
