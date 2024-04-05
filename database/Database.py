@@ -6,9 +6,11 @@ from sqlalchemy_utils import create_database, database_exists
 
 
 class Database(object):
-    def __init__(self,  password: str = '', username: str = 'root',
-                 host: str = 'localhost', port: int = 3306, dbname: str = 'mydb'):
-        self.__engine = create_engine(f'mysql+pymysql://{username}:{password}@{host}:{port}/{dbname}', echo=True)
+    def __init__(self,  dbname: str = 'mydb'):
+        if not dbname.endswith(".db"):
+            dbname += ".db"
+
+        self.__engine = create_engine(f'sqlite:///{dbname}', echo=True)
 
         self.__metadata = MetaData()
         Table('sensors', self.__metadata,
