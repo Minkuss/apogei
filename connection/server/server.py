@@ -1,4 +1,5 @@
 import socket
+import hashlib
 import threading
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
@@ -46,33 +47,27 @@ def perform_key_exchange(conn):
 
     return shared_key
 
-# Encrypt and send data
-def send_encrypted_data(conn, shared_key, data):
-    # Разбиение общего ключа на составляющие: IV, ключ шифрования и ключ аутентификации
-    iv = shared_key[:16]
-    key = shared_key[16:]
+# Generate fixed-length key from shared key
+def derive_key(shared_key):
+    return hashlib.sha256(shared_key).digest()
 
-    # Инициализация объекта шифра с использованием алгоритма AES и режима CBC
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-
-    # Получение объекта шифра для шифрования данных
+# Encrypt message
+def encrypt_message(message, key):
+    key = derive_key(key)
+    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
     encryptor = cipher.encryptor()
-
-    # Дополнение данных до кратного размера блока
     padder = padding.PKCS7(algorithms.AES.block_size).padder()
-    padded_data = padder.update(data) + padder.finalize()
+    padded_data = padder.update(message) + padder.finalize()
+    return encryptor.update(padded_data) + encryptor.finalize()
 
-    # Шифрование дополненных данных и отправка зашифрованных данных через соединение
-    encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
-    conn.sendall(iv + encrypted_data)
-
-# Decrypt received data
-def receive_encrypted_data(conn, shared_key):
-    cipher = shared_key[:16]
-    iv = shared_key[16:32]
-    key = shared_key[32:]
-    encrypted_data = conn.recv(1024)
-    return cipher.decrypt(encrypted_data)
+# Decrypt message
+def decrypt_message(encrypted_message, key):
+    key = derive_key(key)
+    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
+    decryptor = cipher.decryptor()
+    unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
+    decrypted_data = decryptor.update(encrypted_message) + decryptor.finalize()
+    return unpadder.update(decrypted_data) + unpadder.finalize()
 
 # Handle client connection
 def handle_client(conn, addr):
@@ -80,10 +75,10 @@ def handle_client(conn, addr):
     send_public_key(conn)
     shared_key = perform_key_exchange(conn)
 
-    # Example data exchange
-    send_encrypted_data(conn, shared_key, b"Hello from server!")
-    decrypted_data = receive_encrypted_data(conn, shared_key)
-    print("Received from client:", decrypted_data.decode())
+    # Receive encrypted message
+    encrypted_message = conn.recv(1024)
+    decrypted_message = decrypt_message(encrypted_message, shared_key)
+    print("Received message:", decrypted_message.decode())
 
     conn.close()
 
