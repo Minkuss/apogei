@@ -131,6 +131,16 @@ class DataPacker:
                 ('Infrared spectrum', self.lux_sensor.get_infrared_spectrum()),
                 ('Visible spectrum', self.lux_sensor.get_visible_spectrum())]
 
+    def get_bd_package(self) -> [float]:
+        """Get package with sensors data for  DB."""
+        return [self.pressure_sensor.get_pressure_sensor_status(),
+                self.humidity_sensor.get_humidity_sensor_status(),
+                self.pressure_sensor.get_temperature_sensor_status(),
+                self.humidity_sensor.get_temperature_sensor_status(),
+                self.lux_sensor.get_full_spectrum(),
+                self.lux_sensor.get_infrared_spectrum(),
+                self.lux_sensor.get_visible_spectrum()]
+
 
 if __name__ == '__main__':
     # Uncomment to check the performance
