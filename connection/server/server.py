@@ -1,11 +1,15 @@
 import socket
 import hashlib
 import threading
+
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+from database.Database import Database
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization, padding
+from cryptography.hazmat.primitives import serialization, padding, hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
+import pickle
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 12345
@@ -51,40 +55,59 @@ def perform_key_exchange(conn: socket) -> bytes:
 
 
 def derive_key(shared_key: bytes) -> bytes:
-    """Generate fixed-length key from shared key."""
-    return hashlib.sha256(shared_key).digest()
+    """Derive key."""
+    derived_key = HKDF(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=None,
+        info=b'handshake data',
+        backend=default_backend()
+    ).derive(shared_key)
+    return derived_key
 
 
 def encrypt_message(message: bytes, key: bytes) -> bytes:
     """Encrypt message."""
     key = derive_key(key)
-    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
+    iv = b'\x00' * 16  # Initialization vector, should be random for real-world usage
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     encryptor = cipher.encryptor()
+    # Применяем дополнение PKCS7
     padder = padding.PKCS7(algorithms.AES.block_size).padder()
-    padded_data = padder.update(message) + padder.finalize()
-    return encryptor.update(padded_data) + encryptor.finalize()
+    padded_message = padder.update(message) + padder.finalize()
+
+    ciphertext = encryptor.update(padded_message) + encryptor.finalize()
+    return iv + ciphertext
 
 
 def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
     """Decrypt message."""
     key = derive_key(key)
-    cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=default_backend())
+    iv = encrypted_message[:16]  # Получаем IV из зашифрованного сообщения
+    ciphertext = encrypted_message[16:]
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
     unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
-    decrypted_data = decryptor.update(encrypted_message) + decryptor.finalize()
-    return unpadder.update(decrypted_data) + unpadder.finalize()
+
+    decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()
+
+    # Удаляем дополнение
+    unpadded_data = unpadder.update(decrypted_data) + unpadder.finalize()
+
+    return unpadded_data
 
 
-def handle_client(conn: socket, addr: any) -> None:
+def handle_client(conn: socket, addr: any, data: list) -> None:
     """Handle client connection."""
     print(f'Connected to {addr}')
     send_public_key(conn)
     shared_key = perform_key_exchange(conn)
 
-    # Receive encrypted message
-    encrypted_message = conn.recv(1024)
-    decrypted_message = decrypt_message(encrypted_message, shared_key)
-    print('Received message:', decrypted_message.decode())
+    # bytes_data = pickle.dumps(data)
+    for test in data:
+        encrypted_message = encrypt_message(str(test).encode(), shared_key)
+        conn.sendall(encrypted_message)
+        print(test)
 
     conn.close()
 
@@ -95,10 +118,12 @@ def main() -> None:
         server_socket.bind((SERVER_HOST, SERVER_PORT))
         server_socket.listen(5)
         print(f'Server listening on {SERVER_HOST}:{SERVER_PORT}')
+        db = Database()
+        result = db.select_all()
 
         while True:
             conn, addr = server_socket.accept()
-            client_thread = threading.Thread(target=handle_client, args=(conn, addr))
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr, result))
             client_thread.start()
 
 
