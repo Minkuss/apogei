@@ -18,7 +18,16 @@ def getBtnStyleSheet(theame: Theame) -> str:
                 'background-color: rgb(176, 196, 222);' 
                 '}')
     else:
-        return "NOtlalalal"
+        return ('QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(37,72,91);'
+                'color: rgb(255, 255, 255);'
+                'font-size: 16px;'
+                '}'
+                'QPushButton:hover{'
+                'background-color: rgb(103,187,198);' 
+                'color: rgb(0, 0, 0);'
+                '}')
 
 def getTableWidgetStyleSheet(theame: Theame) -> str:
     if (theame == Theame.Dark):
@@ -45,7 +54,28 @@ def getTableWidgetStyleSheet(theame: Theame) -> str:
                 """
                 )
     else:
-        return "lalala"
+        return (
+                """
+                QTableWidget {
+                background-color: rgb(197,236,241); /* Фон свободного пространства */
+                }
+
+                QTableWidget QTableCornerButton::section {
+                    background-color: rgb(103,187,198); /* Фон угловой ячейки */
+                }
+
+                QTableWidget::item {
+                    background-color: rgb(103,187,198);
+                     color: rgb(0,0,0);  /* Фон ячеек */
+                }
+                
+                QHeaderView::section {
+                background-color: rgb(103,187,198);
+                color: rgb(0, 0, 0);
+                font-size: 16px;
+                }
+                """
+                )
 
 def getComboBoxStyleSheet(theame: Theame) -> str:
     if (theame == Theame.Dark):
@@ -58,8 +88,8 @@ def getComboBoxStyleSheet(theame: Theame) -> str:
     else:
         return ('QComboBox{'
                 'border-radius: 3px;'
-                'background-color: rgb(103,187,198);'
-                'color: rgb(0, 0, 0);'
+                'background-color: rgb(37,72,91);'
+                'color: rgb(255, 255, 255);'
                 'font-size: 16px;'
                 '}')
 
@@ -89,7 +119,7 @@ def getMainWindowStyleSheet(theame: Theame) -> str:
         )
     else:
         return (
-            "background-color: white;"  # Light theme background color
+            "background-color: rgb(197,236,241);"  # Light theme background color
             "color: black;"  # Light theme text color
         )
 
