@@ -11,10 +11,8 @@ def main() -> None:
 
     db = Database()
 
-    for i in range(5):
-        values = [data_packer.get_datetime()] + [sensor.value for sensor in sensors]
-        db.insert(values)
-        time.sleep(1)
+    values = [data_packer.get_datetime()] + [sensor[1] for sensor in sensors]
+    db.insert(values)
 
     # for row in db.select_all():
     #     print(row)
