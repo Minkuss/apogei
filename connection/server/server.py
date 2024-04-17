@@ -1,3 +1,4 @@
+import datetime
 import socket
 import hashlib
 import threading
@@ -10,6 +11,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization, padding, hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import pickle
+import os
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 12345
@@ -119,7 +121,16 @@ def main() -> None:
         server_socket.listen(5)
         print(f'Server listening on {SERVER_HOST}:{SERVER_PORT}')
         db = Database()
-        result = db.select_all()
+        if os.path.isfile("time.txt"):
+            result = db.select_all()
+        else:
+            with open("time.txt", "r") as f:
+                custom_time = datetime.datetime.fromisoformat(f.read())
+            now = datetime.datetime.now()
+            result = db.select_by_timestamps(start_time=custom_time, end_time=now)
+
+        with open("time.txt", "w") as f:
+            f.write(now.isoformat())
 
         while True:
             conn, addr = server_socket.accept()
