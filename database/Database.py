@@ -47,6 +47,9 @@ class Database(object):
 
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
         start_time = end_time - datetime.timedelta(minutes=minutes_diff)
+        return self.select_by_timestamps(start_time=start_time, end_time=end_time)
+
+    def select_by_timestamps(self, start_time: datetime.datetime, end_time: datetime.datetime):
         query = select(self.__sensors).where(self.__sensors.c["timestamp"] <= end_time,
                                              self.__sensors.c["timestamp"] >= start_time)
         print(query)
