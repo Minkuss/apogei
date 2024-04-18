@@ -128,20 +128,53 @@ def getActionStyelSheet(theame : Theame) -> str:
         return(
             """
             QMenuBar {
-            background-color: rgb(37,72,91); /* Цвет фона */
-            color: rgb(0, 0, 0); /* Цвет текста */
+                background-color: rgb(37,72,91); /* Цвет фона */
             }
-            QAction {
-            background-color: rgb(37,72,91); /* Цвет фона */
-            color: rgb(0, 0, 0); /* Цвет текста */
+            QMenuBar::item {
+                background-color: rgb(37,72,91); /* Цвет фона элементов */
+                color: rgb(255,255,255); /* Цвет текста элементов */
             }
-            QMenu{
-            background-color: rgb(37,72,91); /* Цвет фона */
-            color: rgb(0, 0, 0);
+            QMenuBar::item:selected  {
+            background-color: rgb(103,187,198); /* Цвет фона элементов */
+            color: rgb(0,0,0); /* Цвет текста элементов */
             }
-            QMenuBar:hover{
-            background-color: rgb(197,236,241);
-            color: rgb(37,72,91);
+            QMenu {
+                background-color: rgb(103,187,198); /* Цвет фона */
+            }
+            QMenu::item {
+                background-color: rgb(37,72,91); /* Цвет фона элементов */
+                color: rgb(255,255,255); /* Цвет текста элементов */
+            }
+            QMenu::item:selected {
+            background-color: rgb(103,187,198); /* Цвет фона элементов */
+            color: rgb(0,0,0); /* Цвет текста элементов */
+            }
+            """
+        )
+    else:
+        return (
+            """
+            QMenuBar {
+                background-color: rgb(197, 236, 241); /* Цвет фона */
+            }
+            QMenuBar::item {
+                background-color: rgb(197, 236, 241); /* Цвет фона элементов */
+                color: rgb(0,0,0); /* Цвет текста элементов */
+            }
+            QMenuBar::item:selected  {
+            background-color: rgb(103,187,198); /* Цвет фона элементов */
+            color: rgb(0,0,0); /* Цвет текста элементов */
+            }
+            QMenu {
+                background-color: rgb(103,187,198); /* Цвет фона */
+            }
+            QMenu::item {
+                background-color: rgb(197, 236, 241); /* Цвет фона элементов */
+                color: rgb(0,0,0); /* Цвет текста элементов */
+            }
+            QMenu::item:selected {
+            background-color: rgb(37,72,91); /* Цвет фона элементов */
+            color: rgb(255,255,255); /* Цвет текста элементов */
             }
             """
         )

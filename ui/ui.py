@@ -15,6 +15,7 @@ class myWindow(QMainWindow):
         self.ui.menu.actions()[0].triggered.connect(self.print_message)
         self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
+        self.getActionStyleSheet(styleSheet.Theame.Dark)
         self.setBtnStyleSheet(styleSheet.Theame.Dark)
         self.setTableWidgetStyleSheet(styleSheet.Theame.Dark)
         self.setComboBoxStyleSheet(styleSheet.Theame.Dark)
@@ -23,6 +24,11 @@ class myWindow(QMainWindow):
         self.ui.comboBox.addItem("Датчик 1 - температура")
         self.ui.comboBox.adjustSize()
         self.ui.pushButton_3.clicked.connect(self.fill_table)
+        self.setMaximumWidth(447)
+        self.setMaximumHeight(666)
+        self.setMinimumWidth(447)
+        self.setMinimumHeight(666)
+
 
 
 
@@ -39,6 +45,7 @@ class myWindow(QMainWindow):
         self.setComboBoxStyleSheet(theame)
         self.setDatePickerStyleSheet(theame)
         self.setMainWindowStyleSheet(theame)
+        self.getActionStyleSheet(theame)
 
 
     def fill_table(self):
@@ -96,6 +103,8 @@ class myWindow(QMainWindow):
                     value = "0"
                 item = QTableWidgetItem(value)
                 self.ui.tableWidget.setItem(row, column, item)
+        self.setTableWidgetCloumnWidth()
+
 
     def remove_duplicate(self, mylist):
         return sorted(set(mylist), key=lambda x: mylist.index(x))
@@ -123,6 +132,12 @@ class myWindow(QMainWindow):
         self.ui.pushButton_2.setStyleSheet(styleSheet.getBtnStyleSheet(theame))
         self.ui.pushButton_3.setStyleSheet(styleSheet.getBtnStyleSheet(theame))
 
+    def setTableWidgetCloumnWidth(self) -> None:
+        num_columns = self.ui.tableWidget.columnCount()
+        column_width = self.ui.tableWidget.width() / 0.85
+        for i in range(num_columns):
+            self.ui.tableWidget.setColumnWidth(i,column_width)
+
     def setTableWidgetStyleSheet(self, theame) -> None:
         self.ui.tableWidget.setStyleSheet(styleSheet.getTableWidgetStyleSheet(theame))
 
@@ -135,8 +150,11 @@ class myWindow(QMainWindow):
 
     def setMainWindowStyleSheet(self, theame) -> None:
         self.setStyleSheet(styleSheet.getMainWindowStyleSheet(theame))
+
     def getActionStyleSheet(self, theame) -> None:
         self.ui.menubar.setStyleSheet(styleSheet.getActionStyelSheet(theame))
+        self.ui.menu.setStyleSheet(styleSheet.getActionStyelSheet(theame))
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
