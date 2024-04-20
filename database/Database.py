@@ -1,4 +1,6 @@
 import datetime
+import sys
+import json
 
 import sqlalchemy
 from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
@@ -46,6 +48,7 @@ class Database(object):
                 conn.rollback()
 
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
+        """Select data in time range from database as alchemy classes."""
         start_time = end_time - datetime.timedelta(minutes=minutes_diff)
         query = select(self.__sensors).where(self.__sensors.c["timestamp"] <= end_time,
                                              self.__sensors.c["timestamp"] >= start_time)
@@ -58,18 +61,34 @@ class Database(object):
                 print(e.args)
 
     def select_all(self):
-        session = sessionmaker(bind=self.__engine)()
-        query = session.query(self.__sensors).all()
-        session.close()
-        return query
+        """Select all data from database as alchemy classes."""
+        with self.__engine.connect() as conn:
+            result = conn.execute(select(self.__sensors)).all()
+        return result
+
+    def select_all_as_dict(self):
+        """Select all data from database as json objects."""
+        with self.__engine.connect() as conn:
+            result = conn.execute(select(self.__sensors)).all()
+
+        data = []
+        for row in result:
+            dict_row = row._asdict()
+            dict_row["timestamp"] = dict_row["timestamp"].isoformat()
+            data.append(dict_row)
+
+        return data
 
 
 def main() -> None:
     """Entry point."""
     db: Database = Database()
     values: list[datetime.datetime | float] = [datetime.datetime.now()]
-    print(values)
-    db.insert(values)
+    data = db.select_all_as_dict()
+    json_data = json.dumps(data)
+    print(sys.getsizeof(json_data))
+    raw_data = db.select_all()
+    print(sys.getsizeof(raw_data))
 
 
 if __name__ == '__main__':
