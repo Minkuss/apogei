@@ -1,27 +1,30 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QAbstractItemView
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
 import styleSheet
 
 
-class myWindow(QMainWindow):
-    def __init__(self):
-        super(myWindow, self).__init__()
+class MyWindow(QMainWindow):
+    """Class for ui."""
+
+    def __init__(self) -> None:
+        """Initialize class and edit ui parameters."""
+        super(MyWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.theme = styleSheet.Theame.Dark
-        self.ui.menu.actions()[0].triggered.connect(self.print_message)
+        self.setWindowTitle('Апогей')
+        self.theme = styleSheet.Theme.Dark
+        self.ui.menu.actions()[0].triggered.connect(self.change_style)
         self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
-        self.getActionStyleSheet(styleSheet.Theame.Dark)
-        self.setBtnStyleSheet(styleSheet.Theame.Dark)
-        self.setTableWidgetStyleSheet(styleSheet.Theame.Dark)
-        self.setComboBoxStyleSheet(styleSheet.Theame.Dark)
-        self.setDatePickerStyleSheet(styleSheet.Theame.Dark)
-        self.setMainWindowStyleSheet(styleSheet.Theame.Dark)
-        self.ui.comboBox.addItem("Датчик 1 - температура")
+        self.get_action_style_sheet(styleSheet.Theme.Dark)
+        self.set_btn_style_sheet(styleSheet.Theme.Dark)
+        self.set_table_widget_style_sheet(styleSheet.Theme.Dark)
+        self.set_combo_box_style_sheet(styleSheet.Theme.Dark)
+        self.set_date_picker_style_sheet(styleSheet.Theme.Dark)
+        self.set_main_window_style_sheet(styleSheet.Theme.Dark)
+        self.ui.comboBox.addItem('Датчик 1 - температура')
         self.ui.comboBox.adjustSize()
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.setMaximumWidth(447)
@@ -29,26 +32,25 @@ class myWindow(QMainWindow):
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
 
-
-
-
-    def print_message(self):
-        if self.theme == styleSheet.Theame.Dark:
-            self.theme = styleSheet.Theame.Light
+    def change_style(self) -> None:
+        """Set new stylesheet."""
+        if self.theme == styleSheet.Theme.Dark:
+            self.theme = styleSheet.Theme.Light
         else:
-            self.theme = styleSheet.Theame.Dark
+            self.theme = styleSheet.Theme.Dark
         self.update_styles(self.theme)
 
-    def update_styles(self, theame):
-        self.setBtnStyleSheet(theame)
-        self.setTableWidgetStyleSheet(theame)
-        self.setComboBoxStyleSheet(theame)
-        self.setDatePickerStyleSheet(theame)
-        self.setMainWindowStyleSheet(theame)
-        self.getActionStyleSheet(theame)
+    def update_styles(self, theme: styleSheet.Theme) -> None:
+        """Update widgets style."""
+        self.set_btn_style_sheet(theme)
+        self.set_table_widget_style_sheet(theme)
+        self.set_combo_box_style_sheet(theme)
+        self.set_date_picker_style_sheet(theme)
+        self.set_main_window_style_sheet(theme)
+        self.get_action_style_sheet(theme)
 
-
-    def fill_table(self):
+    def fill_table(self) -> None:
+        """Fill tables with current scaner data."""
         self.ui.tableWidget.clear()
         scanner1 = [
             [datetime(2024, 3, 15, 14, 20), 25],
@@ -69,8 +71,8 @@ class myWindow(QMainWindow):
         data_by_date = {}
 
         for date_time, value in scanner1_sorted:
-            date_str = date_time.strftime("%d/%m/%Y")
-            time_str = date_time.strftime("%H:%M")
+            date_str = date_time.strftime('%d/%m/%Y')
+            time_str = date_time.strftime('%H:%M')
 
             # Добавляем данные в словарь по времени
             if time_str not in data_by_time:
@@ -100,23 +102,23 @@ class myWindow(QMainWindow):
                 if date in data_by_time[time]:
                     value = str(data_by_time[time][date])
                 else:
-                    value = "0"
+                    value = '0'
                 item = QTableWidgetItem(value)
                 self.ui.tableWidget.setItem(row, column, item)
-        self.setTableWidgetCloumnWidth()
+        self.set_table_widget_column_width()
 
-
-    def remove_duplicate(self, mylist):
+    @staticmethod
+    def remove_duplicate(mylist: list) -> list:
+        """Remove duplicates from sensors list."""
         return sorted(set(mylist), key=lambda x: mylist.index(x))
 
-    def search(self):
+    def search(self) -> None:
+        """Search data by datetimes."""
         start_date = self.ui.dateEdit.date()
         start_date_datetime = datetime(start_date.year(), start_date.month(), start_date.day())
         end_date = self.ui.dateEdit_2.date()
         end_date_datetime = datetime(end_date.year(), end_date.month(), end_date.day())
-        date = '12/05/2023'
         date_format = '%d/%m/%Y'
-        datetime_object = datetime.strptime(date, date_format)
 
         row_index = 0
         while row_index < self.ui.tableWidget.rowCount():
@@ -127,39 +129,45 @@ class myWindow(QMainWindow):
             else:
                 row_index += 1
 
-    def setBtnStyleSheet(self, theame) -> None:
-        self.ui.pushButton.setStyleSheet(styleSheet.getBtnStyleSheet(theame))
-        self.ui.pushButton_2.setStyleSheet(styleSheet.getBtnStyleSheet(theame))
-        self.ui.pushButton_3.setStyleSheet(styleSheet.getBtnStyleSheet(theame))
+    def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set button style sheet."""
+        self.ui.pushButton.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
+        self.ui.pushButton_2.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
+        self.ui.pushButton_3.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
 
-    def setTableWidgetCloumnWidth(self) -> None:
+    def set_table_widget_column_width(self) -> None:
+        """Set table width."""
         num_columns = self.ui.tableWidget.columnCount()
         column_width = self.ui.tableWidget.width() / 0.85
         for i in range(num_columns):
-            self.ui.tableWidget.setColumnWidth(i,column_width)
+            self.ui.tableWidget.setColumnWidth(i, column_width)
 
-    def setTableWidgetStyleSheet(self, theame) -> None:
-        self.ui.tableWidget.setStyleSheet(styleSheet.getTableWidgetStyleSheet(theame))
+    def set_table_widget_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set table style sheet."""
+        self.ui.tableWidget.setStyleSheet(styleSheet.get_table_widget_style_sheet(theme))
 
-    def setComboBoxStyleSheet(self, theame) -> None:
-        self.ui.comboBox.setStyleSheet(styleSheet.getComboBoxStyleSheet(theame))
+    def set_combo_box_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set combo box style sheet."""
+        self.ui.comboBox.setStyleSheet(styleSheet.get_combo_box_style_sheet(theme))
 
-    def setDatePickerStyleSheet(self,theame) -> None:
-        self.ui.dateEdit.setStyleSheet(styleSheet.getDatePickerStyleSheet(theame))
-        self.ui.dateEdit_2.setStyleSheet(styleSheet.getDatePickerStyleSheet(theame))
+    def set_date_picker_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set date picker style sheet."""
+        self.ui.dateEdit.setStyleSheet(styleSheet.get_date_picker_style_sheet(theme))
+        self.ui.dateEdit_2.setStyleSheet(styleSheet.get_date_picker_style_sheet(theme))
 
-    def setMainWindowStyleSheet(self, theame) -> None:
-        self.setStyleSheet(styleSheet.getMainWindowStyleSheet(theame))
+    def set_main_window_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set main window style sheet."""
+        self.setStyleSheet(styleSheet.get_main_window_style_sheet(theme))
 
-    def getActionStyleSheet(self, theame) -> None:
-        self.ui.menubar.setStyleSheet(styleSheet.getActionStyelSheet(theame))
-        self.ui.menu.setStyleSheet(styleSheet.getActionStyelSheet(theame))
+    def get_action_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Get action style sheet."""
+        self.ui.menubar.setStyleSheet(styleSheet.get_action_style_sheet(theme))
+        self.ui.menu.setStyleSheet(styleSheet.get_action_style_sheet(theme))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main_window = myWindow()
+    main_window = MyWindow()
     main_window.fill_table()
     main_window.show()
     sys.exit(app.exec())
-
