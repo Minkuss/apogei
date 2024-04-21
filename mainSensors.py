@@ -2,6 +2,7 @@ import time
 
 from sensors.sensor import DataPacker
 from database.Database import Database
+from connection.server.server import main as mainConnection
 
 
 def main() -> None:
@@ -20,3 +21,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+    db = Database()
+    mainConnection(db)

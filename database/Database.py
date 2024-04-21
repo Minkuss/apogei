@@ -12,13 +12,13 @@ from sqlalchemy_utils import create_database, database_exists
 
 class Database(object):
     def __init__(self,  dbname: str = 'mydb'):
-        if not dbname.endswith(".db"):
-            dbname += ".db"
+        if not dbname.endswith('.db'):
+            dbname += '.db'
 
         self.__engine = create_engine(f'sqlite:///{dbname}', echo=False)
 
         self.__metadata = MetaData()
-        COLUMN_NAMES = ["pressure", "humidity", "temperature", "full_spectrum", "infrared_spectrum", "visible_spectrum"]
+        COLUMN_NAMES = ['pressure', 'humidity', 'temperature', 'full_spectrum', 'infrared_spectrum', 'visible_spectrum']
         COLUMNS = [Column(column_name, sqlalchemy.DECIMAL(4, 2, asdecimal=False))
                    for column_name in COLUMN_NAMES]
         Table('sensors', self.__metadata,
@@ -50,8 +50,8 @@ class Database(object):
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
         """Select data in time range from database as alchemy classes."""
         start_time = end_time - datetime.timedelta(minutes=minutes_diff)
-        query = select(self.__sensors).where(self.__sensors.c["timestamp"] <= end_time,
-                                             self.__sensors.c["timestamp"] >= start_time)
+        query = select(self.__sensors).where(self.__sensors.c['timestamp'] <= end_time,
+                                             self.__sensors.c['timestamp'] >= start_time)
         print(query)
         with self.__engine.connect() as conn:
             try:
@@ -93,9 +93,11 @@ def main() -> None:
     # db.insert(values)
     data = db.select_all_as_dict()
     string = json.dumps(data)
-    print(sys.getsizeof(data))
+    print(sys.getsizeof(string))
 
-    print(*data, sep="\n")
+    print(*json.loads(string), sep='\n')
+
+    # print(*data, sep="\n")
 
 
 if __name__ == '__main__':
