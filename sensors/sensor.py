@@ -121,7 +121,7 @@ class DataPacker:
         """Get current time from sensor."""
         return self.time_sensor.get_sensor_status()
 
-    def get_package(self) -> [(str, float)]:
+    def get_package(self) -> list[(str, float)]:
         """Get package with sensors data."""
         return [('Pressure', self.pressure_sensor.get_pressure_sensor_status()),
                 ('Humidity', self.humidity_sensor.get_humidity_sensor_status()),
@@ -149,10 +149,10 @@ def main() -> None:
     packer = DataPacker()
 
     while True:
-        datetime = packer.get_datetime()
+        dt = packer.get_datetime().timetuple()
         package = packer.get_package()
-        print('Время: {}:{}:{}'.format(datetime.tm_hour, datetime.tm_min, datetime.tm_sec))
-        print('Дата: {}-{}-{}'.format(datetime.tm_year, datetime.tm_mon, datetime.tm_mday))
+        print('Время: {}:{}:{}'.format(dt.tm_hour, dt.tm_min, dt.tm_sec))
+        print('Дата: {}-{}-{}'.format(dt.tm_year, dt.tm_mon, dt.tm_mday))
         for data in package:
             print(*data)
         print()
@@ -161,4 +161,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-    pass
