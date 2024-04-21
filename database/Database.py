@@ -2,6 +2,8 @@ import datetime
 import sys
 import json
 
+from Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
+
 import sqlalchemy
 from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
 from sqlalchemy.orm import sessionmaker
@@ -16,14 +18,12 @@ class Database(object):
         self.__engine = create_engine(f'sqlite:///{dbname}', echo=False)
 
         self.__metadata = MetaData()
+        COLUMN_NAMES = ["pressure", "humidity", "temperature", "full_spectrum", "infrared_spectrum", "visible_spectrum"]
+        COLUMNS = [Column(column_name, sqlalchemy.DECIMAL(4, 2, asdecimal=False))
+                   for column_name in COLUMN_NAMES]
         Table('sensors', self.__metadata,
               Column('timestamp', sqlalchemy.TIMESTAMP, primary_key=True),
-              Column('pressure', sqlalchemy.DECIMAL(6, 1)),
-              Column('humidity', sqlalchemy.DECIMAL(6, 1)),
-              Column('temperature', sqlalchemy.DECIMAL(6, 1)),
-              Column('full_spectrum', sqlalchemy.DECIMAL(6, 1)),
-              Column('infrared_spectrum', sqlalchemy.DECIMAL(6, 1)),
-              Column('visible_spectrum', sqlalchemy.DECIMAL(6, 1))),
+              *COLUMNS)
 
         if not database_exists(self.__engine.url):
             create_database(self.__engine.url)
@@ -74,7 +74,12 @@ class Database(object):
         data = []
         for row in result:
             dict_row = row._asdict()
-            dict_row["timestamp"] = dict_row["timestamp"].isoformat()
+            for key, value in dict_row.items():
+                # if value is None:
+                #     continue
+                if isinstance(value, datetime.datetime):
+                    dict_row[key] = value.isoformat()
+
             data.append(dict_row)
 
         return data
@@ -83,12 +88,14 @@ class Database(object):
 def main() -> None:
     """Entry point."""
     db: Database = Database()
-    values: list[datetime.datetime | float] = [datetime.datetime.now()]
+    sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
+    values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
+    # db.insert(values)
     data = db.select_all_as_dict()
-    json_data = json.dumps(data)
-    print(sys.getsizeof(json_data))
-    raw_data = db.select_all()
-    print(sys.getsizeof(raw_data))
+    string = json.dumps(data)
+    print(sys.getsizeof(data))
+
+    print(*data, sep="\n")
 
 
 if __name__ == '__main__':
