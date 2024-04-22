@@ -62,10 +62,7 @@ class MyWindow(QMainWindow):
     def fill_table(self) -> None:
         """Fill table with data."""
         self.data['timestamp'] = to_datetime(self.data['timestamp'])
-        print(self.data.keys())
-        print(type(self.data['timestamp']), self.data['temperature'])
         scanner = []
-        print(self.data['humidity'])
         match self.ui.comboBox.currentText():
             case 'Температура':
                 scanner = list(zip(self.data['timestamp'], self.data['temperature']))
