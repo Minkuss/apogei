@@ -3,6 +3,8 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbst
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
 import styleSheet
+from pandas import DataFrame, to_datetime
+from database.Database import Database
 
 
 class MyWindow(QMainWindow):
@@ -24,13 +26,21 @@ class MyWindow(QMainWindow):
         self.set_combo_box_style_sheet(styleSheet.Theme.Dark)
         self.set_date_picker_style_sheet(styleSheet.Theme.Dark)
         self.set_main_window_style_sheet(styleSheet.Theme.Dark)
-        self.ui.comboBox.addItem('Датчик 1 - температура')
+        self.ui.comboBox.addItem('Температура')
+        self.ui.comboBox.addItem('Влажность')
+        self.ui.comboBox.addItem('Давление')
+        self.ui.comboBox.addItem('Полный спектр')
+        self.ui.comboBox.addItem('Инфракрасный спектр')
+        self.ui.comboBox.addItem('Видимый спектр')
         self.ui.comboBox.adjustSize()
+        self.ui.comboBox.activated.connect(self.fill_table)
         self.ui.pushButton_3.clicked.connect(self.fill_table)
+        self.ui.pushButton_2.clicked.connect(self.update_data)
         self.setMaximumWidth(447)
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
+        self.data = DataFrame(Database().select_all_as_dict())
 
     def change_style(self) -> None:
         """Set new stylesheet."""
@@ -50,29 +60,38 @@ class MyWindow(QMainWindow):
         self.get_action_style_sheet(theme)
 
     def fill_table(self) -> None:
-        """Fill tables with current scaner data."""
+        """Fill table with data."""
+        self.data['timestamp'] = to_datetime(self.data['timestamp'])
+        print(self.data.keys())
+        print(type(self.data['timestamp']), self.data['temperature'])
+        scanner = []
+        print(self.data['humidity'])
+        match self.ui.comboBox.currentText():
+            case 'Температура':
+                scanner = list(zip(self.data['timestamp'], self.data['temperature']))
+            case 'Влажность':
+                scanner = list(zip(self.data['timestamp'], self.data['humidity']))
+            case 'Давление':
+                scanner = list(zip(self.data['timestamp'], self.data['pressure']))
+            case 'Полный спектр':
+                scanner = list(zip(self.data['timestamp'], self.data['full_spectrum']))
+            case 'Инфракрасный спектр':
+                scanner = list(zip(self.data['timestamp'], self.data['infrared_spectrum']))
+            case 'Видимый спектр':
+                scanner = list(zip(self.data['timestamp'], self.data['visible_spectrum']))
+
         self.ui.tableWidget.clear()
-        scanner1 = [
-            [datetime(2024, 3, 15, 14, 20), 25],
-            [datetime(2024, 3, 15, 15, 20), 25],
-            [datetime(2024, 3, 15, 16, 20), 25],
-            [datetime(2024, 3, 15, 17, 20), 25],
-            [datetime(2024, 3, 15, 18, 20), 25],
-            [datetime(2024, 3, 16, 14, 30), 29],
-            [datetime(2024, 3, 12, 14, 45), 29],
-            [datetime(2024, 3, 16, 12, 35), 41]
-        ]
 
         # Сортируем данные в порядке возрастания по времени и дате
-        scanner1_sorted = sorted(scanner1, key=lambda x: (x[0].time(), x[0]))
+        scanner_sorted = sorted(scanner, key=lambda x: (x[0].time(), x[0]))
 
         # Создаем словари для хранения данных по времени и дате
         data_by_time = {}
         data_by_date = {}
 
-        for date_time, value in scanner1_sorted:
+        for date_time, value in scanner_sorted:
             date_str = date_time.strftime('%d/%m/%Y')
-            time_str = date_time.strftime('%H:%M')
+            time_str = date_time.strftime('%H:%M:%S')
 
             # Добавляем данные в словарь по времени
             if time_str not in data_by_time:
@@ -129,6 +148,11 @@ class MyWindow(QMainWindow):
             else:
                 row_index += 1
 
+    def update_data(self):
+        """Update data."""
+        self.data = self.data = DataFrame(Database().select_all_as_dict())
+        self.fill_table()
+
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
         self.ui.pushButton.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
@@ -138,7 +162,7 @@ class MyWindow(QMainWindow):
     def set_table_widget_column_width(self) -> None:
         """Set table width."""
         num_columns = self.ui.tableWidget.columnCount()
-        column_width = self.ui.tableWidget.width() / 0.85
+        column_width = 113
         for i in range(num_columns):
             self.ui.tableWidget.setColumnWidth(i, column_width)
 
