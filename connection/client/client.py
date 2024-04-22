@@ -2,6 +2,7 @@ import datetime
 import socket
 import hashlib
 import json
+import sys
 
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
@@ -90,7 +91,7 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
 
     # Удаляем дополнение
     unpadded_data = (unpadder.update(decrypted_data)
-                      + unpadder.finalize())
+                     + unpadder.finalize())
 
     return unpadded_data
 
@@ -98,11 +99,13 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
 def handle_server(conn: socket) -> None:
     """Handle server connection."""
     shared_key = perform_key_exchange(conn)
+    message_size = conn.recv(4)
 
-    encrypted_message = conn.recv(2 ** 16)
+    encrypted_message = conn.recv(int.from_bytes(message_size))
     decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
 
     data = json.loads(decrypted_message)
+    print(data)
     return data
 
 
