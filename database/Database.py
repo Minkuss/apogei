@@ -2,7 +2,7 @@ import datetime
 import sys
 import json
 
-from Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
+from database.Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
 
 import sqlalchemy
 from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
@@ -90,7 +90,7 @@ def main() -> None:
     db: Database = Database()
     sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
     values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
-    # db.insert(values)
+    db.insert(values)
     data = db.select_all_as_dict()
     string = json.dumps(data)
     print(sys.getsizeof(string))
