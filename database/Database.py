@@ -1,21 +1,18 @@
 import datetime
-import sys
-import json
 
 from database.Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
 
 import sqlalchemy
-from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select, delete
 from sqlalchemy_utils import create_database, database_exists
 
 
 class Database(object):
-    def __init__(self,  dbname: str = 'mydb'):
+    def __init__(self, dbname: str = 'mydb', echo: bool = False):
         if not dbname.endswith('.db'):
             dbname += '.db'
 
-        self.__engine = create_engine(f'sqlite:///{dbname}', echo=False)
+        self.__engine = create_engine(f'sqlite:///{dbname}', echo=echo)
 
         self.__metadata = MetaData()
         COLUMN_NAMES = ['pressure', 'humidity', 'temperature', 'full_spectrum', 'infrared_spectrum', 'visible_spectrum']
@@ -84,20 +81,27 @@ class Database(object):
 
         return data
 
+    def clear_old_data(self, age_days: int = 1):
+        """Delete old data from database.
+
+        :param age_days: determine how old data will be removed from database
+        """
+        threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
+        query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
+        with self.__engine.connect() as conn:
+            conn.execute(query)
+            conn.commit()
+
 
 def main() -> None:
     """Entry point."""
-    db: Database = Database()
+    db: Database = Database(echo=True)
     sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
     values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
     db.insert(values)
     data = db.select_all_as_dict()
-    string = json.dumps(data)
-    print(sys.getsizeof(string))
-
-    print(*json.loads(string), sep='\n')
-
-    # print(*data, sep="\n")
+    print(data)
+    # db.clear_old_data(age_days=1)
 
 
 if __name__ == '__main__':
