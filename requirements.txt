@@ -33,3 +33,4 @@ SQLAlchemy-Utils==0.41.2
 paramiko~=3.4.0
 cryptography~=42.0.5
 pyside6==6.6.3.1
+pandas==2.2.2
