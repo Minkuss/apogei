@@ -164,3 +164,4 @@ cython_debug/
 /ui/mydb.db
 /connection/server/mydb.db
 /ui/mydb.db
+/mydb.db
