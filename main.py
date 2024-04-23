@@ -23,6 +23,7 @@ def insert_values() -> None:
 def run_schedule() -> None:
     """Run schedule functions."""
     schedule.every(20).seconds.do(insert_values)
+    schedule.every().day.do(Database.clear_old_data)
 
     while True:
         schedule.run_pending()
