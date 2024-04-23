@@ -1,12 +1,9 @@
 import datetime
-import sys
-import json
 
 from database.Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
 
 import sqlalchemy
-from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Insert, MetaData, Table, create_engine, exc, insert, select, delete
 from sqlalchemy_utils import create_database, database_exists
 
 
