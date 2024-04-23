@@ -36,11 +36,19 @@ class MyWindow(QMainWindow):
         self.ui.comboBox.activated.connect(self.fill_table)
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.ui.pushButton_2.clicked.connect(self.update_data)
+        self.ui.dateEdit_2.setDate(datetime.now())
+        self.ui.dateEdit.setDate(self.ui.dateEdit_2.date().addDays(-30))
         self.setMaximumWidth(447)
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
-        self.data = DataFrame(Database().select_all_as_dict())
+        self.data: DataFrame = DataFrame()
+
+    def load_data(self) -> None:
+        """Load data from database."""
+        data: dict = Database().select_all_as_dict()
+        self.data = DataFrame(data)
+        self.data['timestamp'] = to_datetime(self.data['timestamp'])
 
     def change_style(self) -> None:
         """Set new stylesheet."""
@@ -61,22 +69,17 @@ class MyWindow(QMainWindow):
 
     def fill_table(self) -> None:
         """Fill table with data."""
-        self.data['timestamp'] = to_datetime(self.data['timestamp'])
+        self.load_data()
         scanner = []
-        match self.ui.comboBox.currentText():
-            case 'Температура':
-                scanner = list(zip(self.data['timestamp'], self.data['temperature']))
-            case 'Влажность':
-                scanner = list(zip(self.data['timestamp'], self.data['humidity']))
-            case 'Давление':
-                scanner = list(zip(self.data['timestamp'], self.data['pressure']))
-            case 'Полный спектр':
-                scanner = list(zip(self.data['timestamp'], self.data['full_spectrum']))
-            case 'Инфракрасный спектр':
-                scanner = list(zip(self.data['timestamp'], self.data['infrared_spectrum']))
-            case 'Видимый спектр':
-                scanner = list(zip(self.data['timestamp'], self.data['visible_spectrum']))
-
+        cases = {
+            'Температура': 'temperature',
+            'Влажность': 'humidity',
+            'Давление': 'pressure',
+            'Полный спектр': 'full_spectrum',
+            'Инфракрасный спектр': 'infrared_spectrum',
+            'Видимый спектр': 'visible_spectrum',
+        }
+        scanner = list(zip(self.data['timestamp'], self.data[cases[self.ui.comboBox.currentText()]]))
         self.ui.tableWidget.clear()
 
         # Сортируем данные в порядке возрастания по времени и дате
@@ -145,9 +148,9 @@ class MyWindow(QMainWindow):
             else:
                 row_index += 1
 
-    def update_data(self):
+    def update_data(self) -> None:
         """Update data."""
-        self.data = self.data = DataFrame(Database().select_all_as_dict())
+        self.load_data()
         self.fill_table()
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
