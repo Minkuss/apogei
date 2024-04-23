@@ -81,6 +81,17 @@ class Database(object):
 
         return data
 
+    def clear_old_data(self, age_days: int = 1):
+        """Delete old data from database.
+
+        :param age_days: determine how old data will be removed from database
+        """
+        threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
+        query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
+        with self.__engine.connect() as conn:
+            conn.execute(query)
+            conn.commit()
+
 
 def main() -> None:
     """Entry point."""
