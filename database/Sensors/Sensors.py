@@ -1,4 +1,3 @@
-import random
 from random import uniform
 
 from database.Sensors.BaseSensor import Sensor
