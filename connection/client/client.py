@@ -1,5 +1,9 @@
+import datetime
 import socket
 import hashlib
+import json
+import sys
+
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization, padding, hashes
@@ -8,8 +12,8 @@ import pickle
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 12345
+SERVER_HOST = '172.20.10.4'
+SERVER_PORT = 30033
 
 p = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF
 g = 2
@@ -86,7 +90,8 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
     decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()
 
     # Удаляем дополнение
-    unpadded_data = unpadder.update(decrypted_data) + unpadder.finalize()
+    unpadded_data = (unpadder.update(decrypted_data)
+                     + unpadder.finalize())
 
     return unpadded_data
 
@@ -94,14 +99,14 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
 def handle_server(conn: socket) -> None:
     """Handle server connection."""
     shared_key = perform_key_exchange(conn)
+    message_size = conn.recv(4)
 
-    while True:
-        encrypted_message = conn.recv(1024)
-        if not encrypted_message:
-            break
-        decrypted_message = decrypt_message(encrypted_message, shared_key)
-        # data = pickle.loads(decrypted_message)
-        print('Received message:', decrypted_message.decode(encoding='utf-8', errors='replace'))
+    encrypted_message = conn.recv(int.from_bytes(message_size))
+    decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
+
+    data = json.loads(decrypted_message)
+    print(data)
+    return data
 
 
 def main() -> None:

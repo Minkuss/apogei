@@ -1,3 +1,4 @@
+import random
 from random import uniform
 
 from abc import ABC, abstractmethod
@@ -41,7 +42,7 @@ class TempSensor(Sensor):
 class PressureSensor(Sensor):
     def __init__(self):
         super().__init__()
-        self.value = 100.0
+        self.value = uniform(5, 35)
 
     def diff(self):
         """Difference between current value and new value."""
@@ -51,7 +52,7 @@ class PressureSensor(Sensor):
 class HumiditySensor(Sensor):
     def __init__(self):
         super().__init__()
-        self.value = 0.7
+        self.value = uniform(10, 30)
 
     def diff(self) -> float:
         """Difference between current value and new value."""

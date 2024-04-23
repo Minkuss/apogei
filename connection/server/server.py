@@ -1,6 +1,7 @@
 import socket
-import hashlib
+import sys
 import threading
+import json
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
@@ -9,10 +10,10 @@ from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization, padding, hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-import pickle
 
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 12345
+
+SERVER_HOST = '172.20.10.4'
+SERVER_PORT = 30033
 
 p = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF
 g = 2
@@ -103,29 +104,29 @@ def handle_client(conn: socket, addr: any, data: list) -> None:
     send_public_key(conn)
     shared_key = perform_key_exchange(conn)
 
-    # bytes_data = pickle.dumps(data)
-    for test in data:
-        encrypted_message = encrypt_message(str(test).encode(), shared_key)
-        conn.sendall(encrypted_message)
-        print(test)
+    encrypted_message = encrypt_message((json.dumps(data, ensure_ascii=False)).encode(), shared_key)
+
+    conn.sendall(sys.getsizeof(encrypted_message).to_bytes(4, signed=True))
+
+    conn.sendall(encrypted_message)
 
     conn.close()
 
 
-def main() -> None:
+def main(db: Database) -> None:
     """Lopping server."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket.bind((SERVER_HOST, SERVER_PORT))
         server_socket.listen(5)
         print(f'Server listening on {SERVER_HOST}:{SERVER_PORT}')
-        db = Database()
-        result = db.select_all()
+        # db = Database()
 
         while True:
             conn, addr = server_socket.accept()
+            result = db.select_all_as_dict()
             client_thread = threading.Thread(target=handle_client, args=(conn, addr, result))
             client_thread.start()
 
 
 if __name__ == '__main__':
-    main()
+    main(Database())
