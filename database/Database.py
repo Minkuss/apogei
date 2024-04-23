@@ -8,11 +8,11 @@ from sqlalchemy_utils import create_database, database_exists
 
 
 class Database(object):
-    def __init__(self,  dbname: str = 'mydb'):
+    def __init__(self, dbname: str = 'mydb', echo: bool = False):
         if not dbname.endswith('.db'):
             dbname += '.db'
 
-        self.__engine = create_engine(f'sqlite:///{dbname}', echo=False)
+        self.__engine = create_engine(f'sqlite:///{dbname}', echo=echo)
 
         self.__metadata = MetaData()
         COLUMN_NAMES = ['pressure', 'humidity', 'temperature', 'full_spectrum', 'infrared_spectrum', 'visible_spectrum']
@@ -84,7 +84,7 @@ class Database(object):
 
 def main() -> None:
     """Entry point."""
-    db: Database = Database()
+    db: Database = Database(echo=True)
     sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
     values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
     db.insert(values)
