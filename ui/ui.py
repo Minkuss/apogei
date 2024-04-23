@@ -37,7 +37,7 @@ class MyWindow(QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.ui.pushButton_2.clicked.connect(self.update_data)
         self.ui.dateEdit_2.setDate(datetime.now())
-        self.ui.dateEdit.setDate(self.ui.dateEdit_2.date().addDays(-30))
+        self.ui.dateEdit.setDate(self.ui.dateEdit_2.date().addDays(-7))
         self.setMaximumWidth(447)
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
