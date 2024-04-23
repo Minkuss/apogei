@@ -100,12 +100,8 @@ def main() -> None:
     values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
     db.insert(values)
     data = db.select_all_as_dict()
-    string = json.dumps(data)
-    print(sys.getsizeof(string))
-
-    print(*json.loads(string), sep='\n')
-
-    # print(*data, sep="\n")
+    print(data)
+    # db.clear_old_data(age_days=1)
 
 
 if __name__ == '__main__':
