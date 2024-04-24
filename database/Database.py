@@ -103,6 +103,9 @@ class Database(object):
 
         :param age_days: determine how old data will be removed from database
         """
+
+        assert age_days >= 0, "Count of days must be non negative"
+
         threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
         query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
         with self.__engine.connect() as conn:
