@@ -124,9 +124,10 @@ def handle_server(conn: socket) -> list[dict]:
 
 def main() -> None:
     """Lopping client."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-        client_socket.connect((SERVER_HOST, SERVER_PORT))
-        handle_server(client_socket)
+    for i in range(10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+            client_socket.connect((SERVER_HOST, SERVER_PORT))
+            handle_server(client_socket)
 
 
 if __name__ == '__main__':
