@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import json
+import time
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
@@ -114,10 +115,12 @@ def handle_client(conn: socket, addr: any, data: list) -> None:
 
     for chunk in data:
         encrypted_message = encrypt_message((json.dumps(chunk, ensure_ascii=False)).encode(), shared_key)
+        print(sys.getsizeof(encrypted_message))
 
         conn.sendall(sys.getsizeof(encrypted_message).to_bytes(4, signed=True))
 
         conn.sendall(encrypted_message)
+        time.sleep(0.3)
 
     end = 0
     conn.sendall(end.to_bytes(4, signed=True))
@@ -140,4 +143,7 @@ def main(db: Database) -> None:
 
 
 if __name__ == '__main__':
-    main(Database())
+    db = Database()
+    db.clear_old_data(0)
+    db.insert_fake_data(168)
+    main(db)
