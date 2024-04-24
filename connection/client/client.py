@@ -122,6 +122,21 @@ def handle_server(conn: socket) -> list[dict]:
     return data
 
 
+def get_data_from_server():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((SERVER_HOST, SERVER_PORT))
+    data = []
+    while True:
+        try:
+            data = handle_server(client_socket)
+            break
+        except:
+            print('Никита лох')
+            continue
+    client_socket.close()
+    return data
+
+
 def main() -> None:
     """Lopping client."""
     for i in range(10):
