@@ -115,7 +115,7 @@ def handle_client(conn: socket, addr: any, data: list) -> None:
 
     for chunk in data:
         encrypted_message = encrypt_message((json.dumps(chunk, ensure_ascii=False)).encode(), shared_key)
-        print(sys.getsizeof(encrypted_message))
+        # print(sys.getsizeof(encrypted_message))
 
         conn.sendall(sys.getsizeof(encrypted_message).to_bytes(4, signed=True))
 
