@@ -5,6 +5,7 @@ from datetime import datetime
 import styleSheet
 from pandas import DataFrame, to_datetime
 from database.Database import Database
+from connection.client.client import get_data_from_server
 
 
 class MyWindow(QMainWindow):
@@ -43,10 +44,12 @@ class MyWindow(QMainWindow):
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
         self.data: DataFrame = DataFrame()
+        self.load_data()
+        self.fill_table()
 
     def load_data(self) -> None:
         """Load data from database."""
-        data: dict = Database().select_all_as_dict()
+        data: dict = get_data_from_server()
         self.data = DataFrame(data)
         self.data['timestamp'] = to_datetime(self.data['timestamp'])
 
@@ -69,7 +72,6 @@ class MyWindow(QMainWindow):
 
     def fill_table(self) -> None:
         """Fill table with data."""
-        self.load_data()
         scanner = []
         cases = {
             'Температура': 'temperature',
