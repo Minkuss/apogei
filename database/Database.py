@@ -115,13 +115,11 @@ class Database(object):
 
 def main() -> None:
     """Entry point."""
-    db: Database = Database(echo=True)
-    sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
-    values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
-    db.insert(values)
+    db: Database = Database(echo=False)
+    db.clear_old_data(0)
+    db.insert_fake_data(12)
     data = db.select_all_as_dict()
-    print(data)
-    # db.clear_old_data(age_days=1)
+    print(*data, sep='\n')
 
 
 if __name__ == '__main__':
