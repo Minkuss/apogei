@@ -102,18 +102,18 @@ def handle_server(conn: socket) -> list[dict]:
     data = []
     while True:
         message_size = int.from_bytes(conn.recv(4))
-        print(message_size)
+        # print(message_size)
         if message_size == 0:
             break
 
         encrypted_message: bytes = conn.recv(message_size)
         current_size = sys.getsizeof(encrypted_message)
-        print(current_size)
+        # print(current_size)
         while current_size != message_size:
             current_size = sys.getsizeof(encrypted_message)
             encrypted_message += conn.recv(message_size)
 
-        print('start decrypt')
+        # print('start decrypt')
         decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
 
         data += json.loads(decrypted_message)
