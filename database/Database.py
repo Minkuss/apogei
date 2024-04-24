@@ -56,9 +56,9 @@ class Database(object):
 
         sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
 
-        for _ in range(count):
-            values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2)
-                                                                                   for sensor in sensors]
+        for i in range(count):
+            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)]
+                                                       + [round(sensor.value, 2) for sensor in sensors])
             self.insert(values)
 
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
