@@ -96,15 +96,20 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
     return unpadded_data
 
 
-def handle_server(conn: socket) -> None:
+def handle_server(conn: socket) -> list[dict]:
     """Handle server connection."""
     shared_key = perform_key_exchange(conn)
-    message_size = conn.recv(4)
+    data = []
+    while True:
+        message_size = int.from_bytes(conn.recv(4))
+        if message_size == 0:
+            break
 
-    encrypted_message = conn.recv(int.from_bytes(message_size))
-    decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
+        encrypted_message = conn.recv(message_size)
+        decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
 
-    data = json.loads(decrypted_message)
+        data += json.loads(decrypted_message)
+
     print(data)
     return data
 
