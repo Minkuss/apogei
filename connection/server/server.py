@@ -100,16 +100,27 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
 
 def handle_client(conn: socket, addr: any, data: list) -> None:
     """Handle client connection."""
+
+    def chunker(seq, size):
+        """chunk a sequence by size."""
+        return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
     print(f'Connected to {addr}')
     send_public_key(conn)
     shared_key = perform_key_exchange(conn)
 
-    encrypted_message = encrypt_message((json.dumps(data, ensure_ascii=False)).encode(), shared_key)
+    CHUNK_SIZE = 12
+    data = chunker(data, CHUNK_SIZE)
 
-    conn.sendall(sys.getsizeof(encrypted_message).to_bytes(4, signed=True))
+    for chunk in data:
+        encrypted_message = encrypt_message((json.dumps(chunk, ensure_ascii=False)).encode(), shared_key)
 
-    conn.sendall(encrypted_message)
+        conn.sendall(sys.getsizeof(encrypted_message).to_bytes(4, signed=True))
 
+        conn.sendall(encrypted_message)
+
+    end = 0
+    conn.sendall(end.to_bytes(4, signed=True))
     conn.close()
 
 
