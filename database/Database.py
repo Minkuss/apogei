@@ -44,6 +44,23 @@ class Database(object):
                 print(e.args)
                 conn.rollback()
 
+    def insert_fake_data(self, count: int):
+        """
+        Insert sensor values into table.
+
+        :param count: list where first value is datetime and other 6 is float
+        :return: None
+        """
+
+        assert count > 0, "Number of rows must be positive"
+
+        sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
+
+        for _ in range(count):
+            values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2)
+                                                                                   for sensor in sensors]
+            self.insert(values)
+
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
         """Select data in time range from database as alchemy classes."""
         start_time = end_time - datetime.timedelta(minutes=minutes_diff)
