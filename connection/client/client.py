@@ -12,8 +12,8 @@ import pickle
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-SERVER_HOST = '172.20.10.4'
-SERVER_PORT = 30033
+SERVER_HOST = '192.168.0.12'
+SERVER_PORT = 30035
 
 p = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF
 g = 2
@@ -102,16 +102,16 @@ def handle_server(conn: socket) -> list[dict]:
     data = []
     while True:
         message_size = int.from_bytes(conn.recv(4))
-        # print(message_size)
+        print(message_size)
         if message_size == 0:
             break
 
         encrypted_message: bytes = conn.recv(message_size)
         current_size = sys.getsizeof(encrypted_message)
-        # print(current_size)
-        while current_size != message_size:
-            current_size = sys.getsizeof(encrypted_message)
-            encrypted_message += conn.recv(message_size)
+        print(current_size)
+        # while current_size != message_size:
+        #     current_size = sys.getsizeof(encrypted_message)
+        #     encrypted_message += conn.recv(message_size)
 
         # print('start decrypt')
         decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
@@ -131,7 +131,7 @@ def get_data_from_server():
             data = handle_server(client_socket)
             break
         except:
-            print('Никита лох')
+            print('Error: handle server')
             continue
     client_socket.close()
     return data
