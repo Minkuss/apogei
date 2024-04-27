@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
 import styleSheet
@@ -34,7 +34,8 @@ class MyWindow(QMainWindow):
         self.ui.comboBox.addItem('Инфракрасный спектр')
         self.ui.comboBox.addItem('Видимый спектр')
         self.ui.comboBox.adjustSize()
-        self.ui.comboBox.activated.connect(self.fill_table)
+        # self.ui.comboBox.activated.connect(self.fill_table)
+        self.ui.comboBox.currentTextChanged.connect(self.fill_table)
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.ui.pushButton_2.clicked.connect(self.update_data)
         self.ui.dateEdit_2.setDate(datetime.now())
@@ -44,8 +45,6 @@ class MyWindow(QMainWindow):
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
         self.data: DataFrame = DataFrame()
-        self.load_data()
-        self.fill_table()
 
     def load_data(self) -> None:
         """Load data from database."""
@@ -152,8 +151,13 @@ class MyWindow(QMainWindow):
 
     def update_data(self) -> None:
         """Update data."""
-        self.load_data()
-        self.fill_table()
+        try:
+            self.load_data()
+            self.fill_table()
+        except ValueError as ex:
+            print(type(ex), ex)
+            QMessageBox.critical(self, "Error", "Сокеты не очень хорошие")
+
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
@@ -194,6 +198,5 @@ class MyWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MyWindow()
-    main_window.fill_table()
     main_window.show()
     sys.exit(app.exec())
