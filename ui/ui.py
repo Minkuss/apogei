@@ -1,4 +1,6 @@
 import sys
+import time
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
@@ -151,13 +153,16 @@ class MyWindow(QMainWindow):
 
     def update_data(self) -> None:
         """Update data."""
-        try:
-            self.load_data()
-            self.fill_table()
-        except ValueError as ex:
-            print(type(ex), ex)
-            QMessageBox.critical(self, "Error", "Сокеты не очень хорошие")
+        while True:
+            try:
+                self.load_data()
+                break
+            except ValueError as ex:
+                print(ex)
+                time.sleep(1)
+                # QMessageBox.critical(self, "Error", "Сокеты не очень хорошие")
 
+        self.fill_table()
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
