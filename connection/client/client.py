@@ -12,9 +12,6 @@ import pickle
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-SERVER_HOST = '192.168.0.12'
-SERVER_PORT = 30035
-
 p = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF
 g = 2
 
@@ -122,28 +119,23 @@ def handle_server(conn: socket) -> list[dict]:
     return data
 
 
-def get_data_from_server():
+def get_data_from_server(server_host: str = '127.0.0.1', server_port: int = 30033):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((SERVER_HOST, SERVER_PORT))
-    data = []
-    while True:
-        try:
-            data = handle_server(client_socket)
-            break
-        except:
-            print('Error: handle server')
-            continue
+    client_socket.connect((server_host, server_port))
+
+    data = handle_server(client_socket)
+
     client_socket.close()
     return data
 
 
-def main() -> None:
+def main(server_host: str, server_port: int) -> None:
     """Lopping client."""
     for i in range(10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-            client_socket.connect((SERVER_HOST, SERVER_PORT))
+            client_socket.connect((server_host, server_port))
             handle_server(client_socket)
 
 
 if __name__ == '__main__':
-    main()
+    main('127.0.0.1', 30033)

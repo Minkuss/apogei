@@ -1,13 +1,12 @@
 import sys
-import time
-
+from Ip_Port_change_code import ChangeConnectionData
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
 from Apogei_ui import Ui_MainWindow
 from datetime import datetime
 import styleSheet
-from pandas import DataFrame, to_datetime
-from database.Database import Database
+from pandas import DataFrame, to_datetime, read_excel
 from connection.client.client import get_data_from_server
+import socket
 
 
 class MyWindow(QMainWindow):
@@ -20,7 +19,11 @@ class MyWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowTitle('Апогей')
         self.theme = styleSheet.Theme.Dark
+        self.ui.menu.addAction('Смена IP и порта')
+        self.ui.menu.addAction('Сброс IP и порта')
         self.ui.menu.actions()[0].triggered.connect(self.change_style)
+        self.ui.menu.actions()[1].triggered.connect(self.show_change_connection_data_window)
+        self.ui.menu.actions()[2].triggered.connect(self.reset_connection_data)
         self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
         self.get_action_style_sheet(styleSheet.Theme.Dark)
@@ -46,13 +49,43 @@ class MyWindow(QMainWindow):
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
+        self.base_ip = '127.0.0.1'
+        self.ip = '127.0.0.1'
+        self.base_port = 30033
+        self.port = 30033
+        self.df = None
         self.data: DataFrame = DataFrame()
+        self.connection_window = None
+
+    def show_change_connection_data_window(self):
+        """Open connection data window."""
+        self.connection_window = ChangeConnectionData()
+        self.connection_window.ReturnChange.connect(self.set_new_connection_data)
+        self.connection_window.show()
+
+    def set_new_connection_data(self, ip, port):
+        """Set new connection data."""
+        self.ip, self.port = ip, port
+        del self.connection_window
+        self.connection_window = None
+
+    def reset_connection_data(self):
+        """Return ip and port to basic values."""
+        self.ip, self.port = self.base_ip, self.base_port
+
+    def export_excel(self):
+        """Export excel."""
+        self.data.to_excel('output.xlsx', index=False)
 
     def load_data(self) -> None:
         """Load data from database."""
-        data: dict = get_data_from_server()
-        self.data = DataFrame(data)
-        self.data['timestamp'] = to_datetime(self.data['timestamp'])
+        try:
+            self.data = read_excel('output.xlsx')
+            self.data['timestamp'] = to_datetime(self.data['timestamp'])
+            self.fill_table()
+        except Exception as ex:
+            print(ex)
+            print('Пустенько, мда')
 
     def change_style(self) -> None:
         """Set new stylesheet."""
@@ -153,16 +186,17 @@ class MyWindow(QMainWindow):
 
     def update_data(self) -> None:
         """Update data."""
-        while True:
-            try:
-                self.load_data()
-                break
-            except ValueError as ex:
-                print(ex)
-                time.sleep(1)
-                # QMessageBox.critical(self, "Error", "Сокеты не очень хорошие")
+        try:
+            data: dict = get_data_from_server(self.ip, self.port)
+            self.data = DataFrame(data)
+            self.data['timestamp'] = to_datetime(self.data['timestamp'])
+        except socket.gaierror as ex:
+            print(ex)
+            QMessageBox.critical(self, 'Ошибка', 'Ошибка подключения к серверу,'
+                                                 'проверьте правильно ли у вас выставлены Ip и порт')
 
         self.fill_table()
+        self.export_excel()
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
@@ -203,5 +237,6 @@ class MyWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MyWindow()
+    main_window.load_data()
     main_window.show()
     sys.exit(app.exec())
