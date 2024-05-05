@@ -106,11 +106,7 @@ def handle_server(conn: socket) -> list[dict]:
         encrypted_message: bytes = conn.recv(message_size)
         current_size = sys.getsizeof(encrypted_message)
         print(current_size)
-        # while current_size != message_size:
-        #     current_size = sys.getsizeof(encrypted_message)
-        #     encrypted_message += conn.recv(message_size)
 
-        # print('start decrypt')
         decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
 
         data += json.loads(decrypted_message)
@@ -119,7 +115,8 @@ def handle_server(conn: socket) -> list[dict]:
     return data
 
 
-def get_data_from_server(server_host: str = '127.0.0.1', server_port: int = 30033):
+def get_data_from_server(server_host: str = '192.168.0.12', server_port: int = 30033):
+    print(server_host, ':', server_port)
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_host, server_port))
 
