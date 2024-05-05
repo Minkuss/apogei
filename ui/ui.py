@@ -68,12 +68,12 @@ class MyWindow(QMainWindow):
 
     def export_excel(self):
         """Export excel."""
-        self.data.to_excel('output.xlsx', index=False)
+        self.data.to_excel('..\\output.xlsx', index=False)
 
     def load_data(self) -> None:
         """Load data from database."""
         try:
-            self.data = read_excel('output.xlsx')
+            self.data = read_excel('..\\output.xlsx')
             self.data['timestamp'] = to_datetime(self.data['timestamp'])
             self.fill_table()
         except Exception as ex:
