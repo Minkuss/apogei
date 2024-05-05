@@ -40,7 +40,6 @@ class MyWindow(QMainWindow):
         self.ui.comboBox.addItem('Инфракрасный спектр')
         self.ui.comboBox.addItem('Видимый спектр')
         self.ui.comboBox.adjustSize()
-        # self.ui.comboBox.activated.connect(self.fill_table)
         self.ui.comboBox.currentTextChanged.connect(self.fill_table)
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.ui.pushButton_2.clicked.connect(self.update_data)
@@ -79,7 +78,7 @@ class MyWindow(QMainWindow):
             self.fill_table()
         except Exception as ex:
             print(ex)
-            print('Пустенько, мда')
+            print('Ошибка получения данных с excel.')
 
     def change_style(self) -> None:
         """Set new stylesheet."""
@@ -100,7 +99,6 @@ class MyWindow(QMainWindow):
 
     def fill_table(self) -> None:
         """Fill table with data."""
-        scanner = []
         cases = {
             'Температура': 'temperature',
             'Влажность': 'humidity',
@@ -147,9 +145,9 @@ class MyWindow(QMainWindow):
 
         # Заполняем таблицу данными
         for row, date in enumerate(unique_dates):
-            for column, time in enumerate(unique_times):
-                if date in data_by_time[time]:
-                    value = str(data_by_time[time][date])
+            for column, data_time in enumerate(unique_times):
+                if date in data_by_time[data_time]:
+                    value = str(data_by_time[data_time][date])
                 else:
                     value = '0'
                 item = QTableWidgetItem(value)
