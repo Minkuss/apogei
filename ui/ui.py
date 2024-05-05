@@ -72,6 +72,11 @@ class MyWindow(QMainWindow):
 
     def load_data(self) -> None:
         """Load data from database."""
+        data: dict = get_data_from_server(self.ip, self.port)
+        self.data = DataFrame(data)
+        self.data['timestamp'] = to_datetime(self.data['timestamp'])
+
+    def load_from_excel_data(self):
         try:
             self.data = read_excel('..\\output.xlsx')
             self.data['timestamp'] = to_datetime(self.data['timestamp'])
@@ -178,14 +183,18 @@ class MyWindow(QMainWindow):
 
     def update_data(self) -> None:
         """Update data."""
-        try:
-            data: dict = get_data_from_server(self.ip, self.port)
-            self.data = DataFrame(data)
-            self.data['timestamp'] = to_datetime(self.data['timestamp'])
-        except socket.gaierror as ex:
-            print(ex)
-            QMessageBox.critical(self, 'Ошибка', 'Ошибка подключения к серверу,'
-                                                 'проверьте правильно ли у вас выставлены Ip и порт')
+        while True:
+            try:
+                self.load_data()
+                break
+            except ValueError as ex:
+                print(ex)
+                time.sleep(1)
+            except socket.gaierror as ex:
+                print(ex)
+                QMessageBox.critical(self, 'Ошибка', 'Ошибка подключения к серверу,'
+                                                     'проверьте правильно ли у вас выставлены Ip и порт')
+                break
 
         self.fill_table()
         self.export_excel()
@@ -229,6 +238,6 @@ class MyWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MyWindow()
-    main_window.load_data()
+    main_window.load_from_excel_data()
     main_window.show()
     sys.exit(app.exec())
