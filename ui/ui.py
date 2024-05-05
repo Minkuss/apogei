@@ -23,10 +23,8 @@ class MyWindow(QMainWindow):
         self.setWindowTitle('Апогей')
         self.theme = styleSheet.Theme.Dark
         self.ui.menu.addAction('Смена IP и порта')
-        self.ui.menu.addAction('Сброс IP и порта')
         self.ui.menu.actions()[0].triggered.connect(self.change_style)
         self.ui.menu.actions()[1].triggered.connect(self.show_change_connection_data_window)
-        self.ui.menu.actions()[2].triggered.connect(self.reset_connection_data)
         self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
         self.get_action_style_sheet(styleSheet.Theme.Dark)
@@ -52,11 +50,8 @@ class MyWindow(QMainWindow):
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
-        self.base_ip = '127.0.0.1'
-        self.ip = '127.0.0.1'
-        self.base_port = 30033
+        self.ip = '192.168.0.12'
         self.port = 30033
-        self.df = None
         self.data: DataFrame = DataFrame()
         self.connection_window = None
 
@@ -71,10 +66,6 @@ class MyWindow(QMainWindow):
         self.ip, self.port = ip, port
         del self.connection_window
         self.connection_window = None
-
-    def reset_connection_data(self):
-        """Return ip and port to basic values."""
-        self.ip, self.port = self.base_ip, self.base_port
 
     def export_excel(self):
         """Export excel."""
