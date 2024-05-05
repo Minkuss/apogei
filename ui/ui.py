@@ -1,12 +1,15 @@
 import sys
-from Ip_Port_change_code import ChangeConnectionData
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
-from Apogei_ui import Ui_MainWindow
+import time
 from datetime import datetime
-import styleSheet
-from pandas import DataFrame, to_datetime, read_excel
-from connection.client.client import get_data_from_server
+
 import socket
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
+from pandas import DataFrame, to_datetime, read_excel
+
+import styleSheet
+from Apogei_ui import Ui_MainWindow
+from Ip_Port_change_code import ChangeConnectionData
+from connection.client.client import get_data_from_server
 
 
 class MyWindow(QMainWindow):
