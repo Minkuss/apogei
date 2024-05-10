@@ -58,6 +58,7 @@ class MyWindow(QMainWindow):
         """Open connection data window."""
         self.connection_window = ChangeConnectionData()
         self.connection_window.ReturnChange.connect(self.set_new_connection_data)
+        self.connection_window.setTheme(self.theme)
         self.connection_window.show()
 
     def set_new_connection_data(self, ip, port):
