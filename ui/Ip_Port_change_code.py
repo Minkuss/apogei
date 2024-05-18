@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox
 from PySide6.QtCore import Signal
+
 from Authorisation_ui import Ui_Dialog
+import styleSheet
 
 
 class ChangeConnectionData(QDialog):
@@ -34,3 +36,28 @@ class ChangeConnectionData(QDialog):
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
         if (self.ui.lineEdit.text() != '') and (self.ui.lineEdit_2.text() != ''):
             self.ui.buttonBox.button(QDialogButtonBox.Ok).setDisabled(False)
+
+    def set_line_edit_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set edit line style sheet."""
+        self.ui.lineEdit.setStyleSheet(styleSheet.get_line_edit_style_sheet(theme))
+        self.ui.lineEdit_2.setStyleSheet(styleSheet.get_line_edit_style_sheet(theme))
+
+
+    def set_dialog_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set dialog  style sheet."""
+        self.setStyleSheet(styleSheet.get_dialog_style_sheet(theme))
+
+    def set_button_box_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set buttonBox style sheet."""
+        self.ui.buttonBox.setStyleSheet(styleSheet.get_btnbox_style_sheet(theme))
+
+    def set_label_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set label style sheet."""
+        self.ui.label.setStyleSheet(styleSheet.get_label_style_sheet(theme))
+        self.ui.label_2.setStyleSheet(styleSheet.get_label_style_sheet(theme))
+
+    def setTheme(self,theme: styleSheet.Theme):
+        self.set_line_edit_style_sheet(theme)
+        self.set_button_box_style_sheet(theme)
+        self.set_dialog_style_sheet(theme)
+        self.set_label_style_sheet(theme)
