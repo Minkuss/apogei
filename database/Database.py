@@ -45,6 +45,29 @@ class Database(object):
                 print(e.args)
                 conn.rollback()
 
+    def insert_distributed_data(self, data: list[list[float]], with_noise: bool = False, samples: int = 4):
+        """
+        Evenly distribute data with half of hour intervals.
+
+        :param data: lisf of rows to distribute
+        :param with_noise: if True make new data with normal noise
+        :param samples: shows how many times the data set will increase
+        :return: None
+        """
+        insert_data = data.copy()
+        now = datetime.datetime.now()
+
+        if with_noise:
+            noise_data = []
+            for row in data:
+                noise_data += self.add_noise(row, samples)
+            insert_data = noise_data
+
+        start_time = now - datetime.timedelta(minutes=30 * (len(insert_data) // 2))
+        for row in insert_data:
+            self.insert([start_time] + row)
+            start_time += datetime.timedelta(minutes=30)
+
     @staticmethod
     def add_noise(data: list[float], samples: int) -> list[list[float]]:
         """
