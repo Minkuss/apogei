@@ -150,6 +150,12 @@ class Database(object):
             conn.execute(query)
             conn.commit()
 
+    def clear(self):
+        """Delete all data from database."""
+        with self.__engine.connect() as conn:
+            conn.execute(delete(self.__sensors))
+            conn.commit()
+
 
 def main() -> None:
     """Entry point."""
