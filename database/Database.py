@@ -160,10 +160,11 @@ class Database(object):
 def main() -> None:
     """Entry point."""
     db: Database = Database(echo=False)
-    db.clear_old_data(0)
-    db.insert_fake_data(12)
+    db.clear()
+    data = np.random.uniform(low=-15, high=15, size=(4, 6)).round(2).tolist()
+    db.insert_distributed_data(data, with_noise=True, samples=10)
     data = db.select_all_as_dict()
-    print(*data, sep='\n')
+    print(*data, len(data), sep='\n')
 
 
 if __name__ == '__main__':
