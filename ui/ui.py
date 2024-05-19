@@ -1,10 +1,15 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView
-from Apogei_ui import Ui_MainWindow
+import time
 from datetime import datetime
+
+import socket
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
+from pandas import DataFrame, to_datetime, read_excel
+
 import styleSheet
-from pandas import DataFrame, to_datetime
-from database.Database import Database
+from Apogei_ui import Ui_MainWindow
+from Ip_Port_change_code import ChangeConnectionData
+from connection.client.client import get_data_from_server
 
 
 class MyWindow(QMainWindow):
@@ -17,7 +22,9 @@ class MyWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowTitle('Апогей')
         self.theme = styleSheet.Theme.Dark
+        self.ui.menu.addAction('Смена IP и порта')
         self.ui.menu.actions()[0].triggered.connect(self.change_style)
+        self.ui.menu.actions()[1].triggered.connect(self.show_change_connection_data_window)
         self.ui.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.pushButton.clicked.connect(self.search)
         self.get_action_style_sheet(styleSheet.Theme.Dark)
@@ -33,7 +40,7 @@ class MyWindow(QMainWindow):
         self.ui.comboBox.addItem('Инфракрасный спектр')
         self.ui.comboBox.addItem('Видимый спектр')
         self.ui.comboBox.adjustSize()
-        self.ui.comboBox.activated.connect(self.fill_table)
+        self.ui.comboBox.currentTextChanged.connect(self.fill_table)
         self.ui.pushButton_3.clicked.connect(self.fill_table)
         self.ui.pushButton_2.clicked.connect(self.update_data)
         self.ui.dateEdit_2.setDate(datetime.now())
@@ -42,13 +49,42 @@ class MyWindow(QMainWindow):
         self.setMaximumHeight(666)
         self.setMinimumWidth(447)
         self.setMinimumHeight(666)
+        self.ip = '192.168.0.12'
+        self.port = 30033
         self.data: DataFrame = DataFrame()
+        self.connection_window = None
+
+    def show_change_connection_data_window(self):
+        """Open connection data window."""
+        self.connection_window = ChangeConnectionData()
+        self.connection_window.ReturnChange.connect(self.set_new_connection_data)
+        self.connection_window.setTheme(self.theme)
+        self.connection_window.show()
+
+    def set_new_connection_data(self, ip, port):
+        """Set new connection data."""
+        self.ip, self.port = ip, port
+        del self.connection_window
+        self.connection_window = None
+
+    def export_excel(self):
+        """Export excel."""
+        self.data.to_excel('..\\output.xlsx', index=False)
 
     def load_data(self) -> None:
         """Load data from database."""
-        data: dict = Database().select_all_as_dict()
+        data: dict = get_data_from_server(self.ip, self.port)
         self.data = DataFrame(data)
         self.data['timestamp'] = to_datetime(self.data['timestamp'])
+
+    def load_from_excel_data(self):
+        try:
+            self.data = read_excel('..\\output.xlsx')
+            self.data['timestamp'] = to_datetime(self.data['timestamp'])
+            self.fill_table()
+        except Exception as ex:
+            print(ex)
+            print('Ошибка получения данных с excel.')
 
     def change_style(self) -> None:
         """Set new stylesheet."""
@@ -69,8 +105,6 @@ class MyWindow(QMainWindow):
 
     def fill_table(self) -> None:
         """Fill table with data."""
-        self.load_data()
-        scanner = []
         cases = {
             'Температура': 'temperature',
             'Влажность': 'humidity',
@@ -117,9 +151,9 @@ class MyWindow(QMainWindow):
 
         # Заполняем таблицу данными
         for row, date in enumerate(unique_dates):
-            for column, time in enumerate(unique_times):
-                if date in data_by_time[time]:
-                    value = str(data_by_time[time][date])
+            for column, data_time in enumerate(unique_times):
+                if date in data_by_time[data_time]:
+                    value = str(data_by_time[data_time][date])
                 else:
                     value = '0'
                 item = QTableWidgetItem(value)
@@ -150,8 +184,21 @@ class MyWindow(QMainWindow):
 
     def update_data(self) -> None:
         """Update data."""
-        self.load_data()
+        while True:
+            try:
+                self.load_data()
+                break
+            except ValueError as ex:
+                print(ex)
+                time.sleep(1)
+            except socket.gaierror as ex:
+                print(ex)
+                QMessageBox.critical(self, 'Ошибка', 'Ошибка подключения к серверу,'
+                                                     'проверьте правильно ли у вас выставлены Ip и порт')
+                break
+
         self.fill_table()
+        self.export_excel()
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
@@ -192,6 +239,6 @@ class MyWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MyWindow()
-    main_window.fill_table()
+    main_window.load_from_excel_data()
     main_window.show()
     sys.exit(app.exec())

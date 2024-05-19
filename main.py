@@ -16,12 +16,12 @@ def insert_values() -> None:
     db = Database()
     db.insert(values)
 
-    print('20 seconds left; New pack of data inserted.')
+    print('An hour left; New pack of data inserted.')
 
 
 def run_schedule() -> None:
     """Run schedule functions."""
-    schedule.every(20).seconds.do(insert_values)
+    schedule.every().hour.do(insert_values)
     schedule.every().day.do(Database.clear_old_data)
 
     while True:

@@ -183,3 +183,91 @@ def get_action_style_sheet(theme: Theme) -> str:
             }
             """
         )
+
+
+def get_line_edit_style_sheet(theme: Theme) -> str:
+    """Get LineEdit style sheet."""
+    if theme == Theme.Dark:
+        return (
+            """
+            QLineEdit {
+                background-color: rgb(197, 236, 241); /* Цвет фона */
+                color: rgb(0, 0, 0); /* Цвет текста */
+                border: 1px solid rgb(103, 187, 198); /* Граница */
+                border-radius: 5px; /* Закругление углов */
+                padding: 5px; /* Отступы внутри */
+                selection-background-color: rgb(103, 187, 198); /* Цвет выделения */
+            }
+            """
+        )
+    else:
+        return (
+            """
+            QLineEdit {
+                background-color: rgb(103,187,198); /* Цвет фона */
+                color: rgb(0, 0, 0); /* Цвет текста */
+                border: 1px solid rgb(103, 187, 198); /* Граница */
+                border-radius: 5px; /* Закругление углов */
+                padding: 5px; /* Отступы внутри */
+                selection-background-color: rgb(37, 72, 91); /* Цвет выделения */
+            }
+            """
+        )
+
+
+def get_btnbox_style_sheet(theme: Theme) -> str:
+    """Get button style sheet."""
+    if theme == Theme.Dark:
+        return ('QDialogButtonBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 16px;'
+                'min-width: 80px;'  # Увеличиваем минимальную ширину кнопки
+                '}'
+                'QDialogButtonBox QPushButton:hover{'
+                'background-color: rgb(176, 196, 222);'
+                '}')
+    else:
+        return ('QDialogButtonBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(37,72,91);'
+                'color: rgb(255, 255, 255);'
+                'font-size: 16px;'
+                'min-width: 80px;'  # Увеличиваем минимальную ширину кнопки
+                '}'
+                'QDialogButtonBox QPushButton:hover{'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0, 0, 0);'
+                '}')
+
+
+def get_dialog_style_sheet(theme: Theme) -> str:
+    """Get dialog style sheet."""
+    if theme == Theme.Dark:
+        return ('QDialog{'
+                'background-color: rgb(37,72,91);'  # Dark theme background color
+                'color: white;'  # Dark theme text color
+
+                '}')
+
+    else:
+        return ('QDialog{'
+                'background-color: rgb(197,236,241);'  # Light theme background color
+                'color: black;'  # Light theme text color
+                '}')
+
+
+def get_label_style_sheet(theme: Theme) -> str:
+    """Get label style sheet."""
+    if theme == Theme.Dark:
+        return ('QLabel{'
+                'background-color: rgb(37,72,91);'  # Dark theme background color
+                'color: white;'  # Dark theme text color
+                '}')
+
+    else:
+        return ('QLabel{'
+                'background-color: rgb(197,236,241);'  # Light theme background color
+                'color: black;'  # Light theme text color
+                '}')

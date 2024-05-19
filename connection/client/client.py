@@ -12,9 +12,6 @@ import pickle
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-SERVER_HOST = '172.20.10.4'
-SERVER_PORT = 30033
-
 p = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF
 g = 2
 
@@ -96,25 +93,46 @@ def decrypt_message(encrypted_message: bytes, key: bytes) -> bytes:
     return unpadded_data
 
 
-def handle_server(conn: socket) -> None:
+def handle_server(conn: socket) -> list[dict]:
     """Handle server connection."""
     shared_key = perform_key_exchange(conn)
-    message_size = conn.recv(4)
+    data = []
+    while True:
+        message_size = int.from_bytes(conn.recv(4))
+        print(message_size)
+        if message_size == 0:
+            break
 
-    encrypted_message = conn.recv(int.from_bytes(message_size))
-    decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
+        encrypted_message: bytes = conn.recv(message_size)
+        current_size = sys.getsizeof(encrypted_message)
+        print(current_size)
 
-    data = json.loads(decrypted_message)
-    print(data)
+        decrypted_message = decrypt_message(encrypted_message, shared_key).decode(encoding='utf-8')
+
+        data += json.loads(decrypted_message)
+
+    print(*data, sep='\n')
     return data
 
 
-def main() -> None:
+def get_data_from_server(server_host: str = '192.168.0.12', server_port: int = 30033):
+    print(server_host, ':', server_port)
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((server_host, server_port))
+
+    data = handle_server(client_socket)
+
+    client_socket.close()
+    return data
+
+
+def main(server_host: str, server_port: int) -> None:
     """Lopping client."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-        client_socket.connect((SERVER_HOST, SERVER_PORT))
-        handle_server(client_socket)
+    for i in range(10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+            client_socket.connect((server_host, server_port))
+            handle_server(client_socket)
 
 
 if __name__ == '__main__':
-    main()
+    main('127.0.0.1', 30033)

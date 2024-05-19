@@ -134,13 +134,13 @@ class DataPacker:
     def get_bd_package(self) -> [datetime.datetime, float]:
         """Get package with sensors data for  DB."""
         return [self.time_sensor.get_sensor_status(),
-                self.pressure_sensor.get_pressure_sensor_status(),
-                self.humidity_sensor.get_humidity_sensor_status(),
-                (self.pressure_sensor.get_temperature_sensor_status() +
-                + self.humidity_sensor.get_temperature_sensor_status()) / 2,
-                self.lux_sensor.get_full_spectrum(),
-                self.lux_sensor.get_infrared_spectrum(),
-                self.lux_sensor.get_visible_spectrum()]
+                round(self.pressure_sensor.get_pressure_sensor_status(), 2),
+                round(self.humidity_sensor.get_humidity_sensor_status(), 2),
+                round((self.pressure_sensor.get_temperature_sensor_status() +
+                       + self.humidity_sensor.get_temperature_sensor_status()) / 2, 2),
+                round(self.lux_sensor.get_full_spectrum(), 2),
+                round(self.lux_sensor.get_infrared_spectrum(), 2),
+                round(self.lux_sensor.get_visible_spectrum(), 2)]
 
 
 def main() -> None:

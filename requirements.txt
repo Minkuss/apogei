@@ -35,3 +35,5 @@ cryptography~=42.0.5
 pyside6==6.6.3.1
 pandas==2.2.2
 schedule==1.2.1
+openpyxl==3.1.2
+pandas

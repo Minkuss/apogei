@@ -44,6 +44,23 @@ class Database(object):
                 print(e.args)
                 conn.rollback()
 
+    def insert_fake_data(self, count: int):
+        """
+        Insert sensor values into table.
+
+        :param count: list where first value is datetime and other 6 is float
+        :return: None
+        """
+
+        assert count > 0, "Number of rows must be positive"
+
+        sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
+
+        for i in range(count):
+            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)]
+                                                       + [round(sensor.value, 2) for sensor in sensors])
+            self.insert(values)
+
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
         """Select data in time range from database as alchemy classes."""
         start_time = end_time - datetime.timedelta(minutes=minutes_diff)
@@ -86,6 +103,9 @@ class Database(object):
 
         :param age_days: determine how old data will be removed from database
         """
+
+        assert age_days >= 0, "Count of days must be non negative"
+
         threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
         query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
         with self.__engine.connect() as conn:
@@ -95,13 +115,11 @@ class Database(object):
 
 def main() -> None:
     """Entry point."""
-    db: Database = Database(echo=True)
-    sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
-    values: list[datetime.datetime | float] = [datetime.datetime.now()] + [round(sensor.value, 2) for sensor in sensors]
-    db.insert(values)
+    db: Database = Database(echo=False)
+    db.clear_old_data(0)
+    db.insert_fake_data(12)
     data = db.select_all_as_dict()
-    print(data)
-    # db.clear_old_data(age_days=1)
+    print(*data, sep='\n')
 
 
 if __name__ == '__main__':
