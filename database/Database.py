@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 
 from database.Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
 
@@ -43,6 +44,22 @@ class Database(object):
             except exc.SQLAlchemyError as e:
                 print(e.args)
                 conn.rollback()
+
+    @staticmethod
+    def add_noise(data: list[float], samples: int) -> list[list[float]]:
+        """
+        Make new rows with normal noise.
+
+        :param data: initial row
+        :param samples: how many samples will be created
+        :return: data with normal noise
+        """
+        data = np.array(data)
+        noise_data = []
+        for i in range(samples):
+            noise_row = data + np.random.normal(0, 2, len(data))
+            noise_data.append(noise_row.round(2).tolist())
+        return noise_data
 
     def insert_fake_data(self, count: int):
         """
