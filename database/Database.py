@@ -68,14 +68,13 @@ class Database(object):
         :param count: list where first value is datetime and other 6 is float
         :return: None
         """
-
-        assert count > 0, "Number of rows must be positive"
+        assert count > 0, 'Number of rows must be positive'
 
         sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
 
         for i in range(count):
-            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)]
-                                                       + [round(sensor.value, 2) for sensor in sensors])
+            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)] +
+                                                       [round(sensor.value, 2) for sensor in sensors])
             self.insert(values)
 
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
@@ -120,8 +119,7 @@ class Database(object):
 
         :param age_days: determine how old data will be removed from database
         """
-
-        assert age_days >= 0, "Count of days must be non negative"
+        assert age_days >= 0, 'Count of days must be non negative'
 
         threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
         query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
