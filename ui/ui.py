@@ -1,10 +1,11 @@
 import sys
 import time
 from datetime import datetime
-
 import socket
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
+
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout, QWidget
 from pandas import DataFrame, to_datetime, read_excel
+import pyqtgraph as pg
 
 import styleSheet
 from Apogei_ui import Ui_MainWindow
@@ -45,13 +46,20 @@ class MyWindow(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.update_data)
         self.ui.dateEdit_2.setDate(datetime.now())
         self.ui.dateEdit.setDate(self.ui.dateEdit_2.date().addDays(-7))
-        self.setMaximumWidth(447)
+        self.ui.dates.currentIndexChanged.connect(self.update_graph)
+        self.ui.graphic_type.currentIndexChanged.connect(self.update_graph)
+        self.ui.comboBox.currentIndexChanged.connect(self.update_graph)
+        self.setMaximumWidth(466)
         self.setMaximumHeight(666)
-        self.setMinimumWidth(447)
+        self.setMinimumWidth(466)
         self.setMinimumHeight(666)
-        self.ip = '192.168.0.12'
+        self.ip = '127.0.0.1'
         self.port = 30033
         self.data: DataFrame = DataFrame()
+        self.ui.dates.clear()
+        self.plot_widget = pg.PlotWidget()
+        self.plot_layout = QVBoxLayout(self.ui.graphic)
+        self.plot_layout.addWidget(self.plot_widget)
         self.connection_window = None
 
     def show_change_connection_data_window(self):
@@ -160,6 +168,69 @@ class MyWindow(QMainWindow):
                 self.ui.tableWidget.setItem(row, column, item)
         self.set_table_widget_column_width()
 
+        # Fill combobox with unique dates
+        self.fill_combobox_with_dates()
+
+    def fill_combobox_with_dates(self):
+        """Fill combobox with unique dates from the data."""
+        unique_dates = sorted({dt.strftime('%d/%m/%Y') for dt in self.data['timestamp']})
+        self.ui.dates.clear()
+        self.ui.dates.addItems(unique_dates)
+        self.update_graph()
+
+    def update_graph(self):
+
+        cases = {
+            'Температура': 'temperature',
+            'Влажность': 'humidity',
+            'Давление': 'pressure',
+            'Полный спектр': 'full_spectrum',
+            'Инфракрасный спектр': 'infrared_spectrum',
+            'Видимый спектр': 'visible_spectrum',
+        }
+
+        selected_case = self.ui.comboBox.currentText()
+        if selected_case not in cases:
+            return
+
+        if self.ui.graphic_type.currentText() == "График по дню":
+            self.ui.dates.show()
+            selected_date = self.ui.dates.currentText()
+            if not selected_date:
+                return
+
+
+
+            # Фильтруем данные по выбранной дате
+            filtered_data = self.data[self.data['timestamp'].dt.strftime('%d/%m/%Y') == selected_date]
+
+            if filtered_data.empty:
+                return
+
+            # Получаем данные для графика
+            times_datetime = filtered_data['timestamp'].dt.to_pydatetime()
+
+            # Извлечение времени из объектов datetime
+            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
+            values = filtered_data[cases[selected_case]].tolist()  # Извлечение численных значений
+            axis = pg.DateAxisItem()
+            self.plot_widget.setBackground('w')
+            self.plot_widget.setAxisItems({'bottom': axis})
+            self.plot_widget.clear()
+            self.plot_widget.plot(times, values, pen='b')
+        else:
+            self.ui.dates.hide()
+            times_datetime = self.data['timestamp'].dt.to_pydatetime()
+            # Извлечение времени из объектов datetime
+            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
+            values = self.data[cases[selected_case]].tolist()  # Извлечение численных значений
+            axis = pg.DateAxisItem()
+            self.plot_widget.setBackground('w')
+            self.plot_widget.setAxisItems({'bottom': axis})
+            self.plot_widget.clear()
+            self.plot_widget.plot(times, values, pen='b')
+
+
     @staticmethod
     def remove_duplicate(mylist: list) -> list:
         """Remove duplicates from sensors list."""
@@ -199,6 +270,8 @@ class MyWindow(QMainWindow):
 
         self.fill_table()
         self.export_excel()
+
+
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
