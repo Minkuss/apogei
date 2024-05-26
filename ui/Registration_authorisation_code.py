@@ -21,10 +21,10 @@ class AuthorisationRegistration(QDialog):
         self.ui.lineEdit_2.textChanged.connect(self.check_line_edits)
         self.ui.buttonBox.button(QDialogButtonBox.Cancel).setText('Отмена')
         self.ui.pushButton.clicked.connect(self.change_forms)
-        # self.setMaximumWidth(290)
-        # self.setMaximumHeight(243)
-        # self.setMinimumWidth(290)
-        # self.setMinimumHeight(243)
+        self.setMaximumWidth(290)
+        self.setMaximumHeight(243)
+        self.setMinimumWidth(290)
+        self.setMinimumHeight(243)
         self.users_data = None
         self.file_path = '..\\users.json'
         self.main_window = MyWindow()
