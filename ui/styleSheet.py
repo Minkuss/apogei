@@ -184,6 +184,7 @@ def get_action_style_sheet(theme: Theme) -> str:
             """
         )
 
+
 def get_line_edit_style_sheet(theme: Theme) -> str:
     """Get LineEdit style sheet."""
     if theme == Theme.Dark:
@@ -240,6 +241,7 @@ def get_btnbox_style_sheet(theme: Theme) -> str:
                 'color: rgb(0, 0, 0);'
                 '}')
 
+
 def get_dialog_style_sheet(theme: Theme) -> str:
     """Get dialog style sheet."""
     if theme == Theme.Dark:
@@ -255,6 +257,7 @@ def get_dialog_style_sheet(theme: Theme) -> str:
                 'color: black;'  # Light theme text color
                 '}')
 
+
 def get_label_style_sheet(theme: Theme) -> str:
     """Get label style sheet."""
     if theme == Theme.Dark:
@@ -268,5 +271,3 @@ def get_label_style_sheet(theme: Theme) -> str:
                 'background-color: rgb(197,236,241);'  # Light theme background color
                 'color: black;'  # Light theme text color
                 '}')
-
-
