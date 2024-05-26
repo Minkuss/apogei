@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import socket
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout
 from pandas import DataFrame, to_datetime, read_excel
 import pyqtgraph as pg
 
@@ -11,6 +11,7 @@ import styleSheet
 from Apogei_ui import Ui_MainWindow
 from Ip_Port_change_code import ChangeConnectionData
 from connection.client.client import get_data_from_server
+import json
 
 
 class MyWindow(QMainWindow):
@@ -61,6 +62,9 @@ class MyWindow(QMainWindow):
         self.plot_layout = QVBoxLayout(self.ui.graphic)
         self.plot_layout.addWidget(self.plot_widget)
         self.connection_window = None
+        self.json_data = None
+        self.current_user = None
+        self.current_password = None
 
     def show_change_connection_data_window(self):
         """Open connection data window."""
@@ -74,6 +78,15 @@ class MyWindow(QMainWindow):
         self.ip, self.port = ip, port
         del self.connection_window
         self.connection_window = None
+        file_path = '..\\users.json'
+        for user in self.json_data:
+            if user["username"] == self.current_user and user['password'] == self.current_password:
+                user['ip'] = ip
+                user['port'] = port
+                break
+        with open(file_path, 'w') as file:
+            json.dump(self.json_data, file, indent=4)
+
 
     def export_excel(self):
         """Export excel."""
