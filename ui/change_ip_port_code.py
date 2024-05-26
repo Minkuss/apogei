@@ -56,7 +56,7 @@ class ChangeConnectionData(QDialog):
         self.ui.label.setStyleSheet(styleSheet.get_label_style_sheet(theme))
         self.ui.label_2.setStyleSheet(styleSheet.get_label_style_sheet(theme))
 
-    def setTheme(self,theme: styleSheet.Theme):
+    def set_theme(self,theme: styleSheet.Theme):
         self.set_line_edit_style_sheet(theme)
         self.set_button_box_style_sheet(theme)
         self.set_dialog_style_sheet(theme)

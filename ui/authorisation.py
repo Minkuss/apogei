@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'authorisation_new.ui'
+## Form generated from reading UI file 'Authorisation.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.3
 ##
@@ -26,27 +26,27 @@ class Ui_Dialog(object):
         Dialog.resize(290, 243)
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(-120, 190, 341, 32))
+        self.buttonBox.setGeometry(QRect(-130, 140, 341, 32))
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         self.label = QLabel(Dialog)
         self.label.setObjectName(u"label")
-        self.label.setGeometry(QRect(50, 30, 121, 16))
+        self.label.setGeometry(QRect(80, 20, 121, 16))
         self.label_2 = QLabel(Dialog)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(50, 100, 111, 16))
+        self.label_2.setGeometry(QRect(110, 80, 111, 16))
         self.lineEdit = QLineEdit(Dialog)
         self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setGeometry(QRect(50, 60, 171, 21))
+        self.lineEdit.setGeometry(QRect(50, 40, 171, 31))
         self.lineEdit_2 = QLineEdit(Dialog)
         self.lineEdit_2.setObjectName(u"lineEdit_2")
-        self.lineEdit_2.setGeometry(QRect(50, 130, 171, 21))
+        self.lineEdit_2.setGeometry(QRect(50, 100, 171, 31))
         self.pushButton = QPushButton(Dialog)
         self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(50, 160, 81, 24))
+        self.pushButton.setGeometry(QRect(90, 210, 101, 31))
         self.pushButton.setStyleSheet(u"border: None;\n"
 "background: None;\n"
-"color: blue;")
+"color: white;text-decoration: underline;")
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)

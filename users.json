@@ -28,5 +28,17 @@
         "password": "\u0430\u043a",
         "ip": "127.0.0.1",
         "port": 30033
+    },
+    {
+        "username": "cc",
+        "password": "dd",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+        {
+        "username": "Egorik",
+        "password": "Top",
+        "ip": "127.0.0.1",
+        "port": 30033
     }
 ]

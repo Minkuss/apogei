@@ -28,6 +28,7 @@ class AuthorisationRegistration(QDialog):
         self.users_data = None
         self.file_path = '..\\users.json'
         self.main_window = MyWindow()
+        self.set_theme(styleSheet.Theme.Dark)
 
     def accept(self) -> None:
         """Read data from user and return data to base window."""
@@ -47,7 +48,6 @@ class AuthorisationRegistration(QDialog):
                     self.main_window.json_data = self.users_data
                     self.close()
                     break
-
 
     def registration(self, name, password):
         # Создать новую запись
@@ -110,7 +110,7 @@ class AuthorisationRegistration(QDialog):
         self.ui.label.setStyleSheet(styleSheet.get_label_style_sheet(theme))
         self.ui.label_2.setStyleSheet(styleSheet.get_label_style_sheet(theme))
 
-    def setTheme(self, theme: styleSheet.Theme):
+    def set_theme(self, theme: styleSheet.Theme):
         self.set_line_edit_style_sheet(theme)
         self.set_button_box_style_sheet(theme)
         self.set_dialog_style_sheet(theme)
