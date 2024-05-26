@@ -8,8 +8,8 @@ from pandas import DataFrame, to_datetime, read_excel
 import pyqtgraph as pg
 
 import styleSheet
-from Apogei_ui import Ui_MainWindow
-from Ip_Port_change_code import ChangeConnectionData
+from apogei_ui import Ui_MainWindow
+from change_ip_port_code import ChangeConnectionData
 from connection.client.client import get_data_from_server
 import json
 

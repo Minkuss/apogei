@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Authorisation_old.ui'
+## Form generated from reading UI file 'change_ip_port.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.3
 ##

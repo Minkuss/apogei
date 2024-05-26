@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QApplication, QLabel
 from PySide6.QtCore import Signal
 import sys
-from authorisation_new import Ui_Dialog
+from authorisation import Ui_Dialog
 import styleSheet
 import os
 import json
@@ -80,9 +80,9 @@ class AuthorisationRegistration(QDialog):
         try:
             with open(self.file_path, 'r') as file:
                 self.users_data = json.load(file)
-        except Exception as ex:
+        except FileNotFoundError:
             self.users_data = []
-        print(self.users_data)
+        # print(self.users_data)
 
 
     def check_line_edits(self):

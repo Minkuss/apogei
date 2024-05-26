@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox
 from PySide6.QtCore import Signal
 
-from Authorisation_ui import Ui_Dialog
+from change_ip_port_ui import Ui_Dialog
 import styleSheet
 
 
