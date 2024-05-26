@@ -38,3 +38,4 @@ schedule==1.2.1
 openpyxl==3.1.2
 pandas
 numpy~=1.26.4
+pyqtgraph
