@@ -42,6 +42,8 @@ class AuthorisationRegistration(QDialog):
                     self.main_window.load_from_excel_data()
                     self.main_window.current_user = name
                     self.main_window.current_password = password
+                    self.main_window.ip = user['ip']
+                    self.main_window.port = user['port']
                     self.main_window.json_data = self.users_data
                     self.close()
                     break
