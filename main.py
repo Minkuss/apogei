@@ -39,7 +39,9 @@ if __name__ == '__main__':
     """Entry point."""
     db = Database()
     db.clear()
-    db.insert_fake_data(120)
+    for _ in range(20):
+        data_packer = DataPacker()
+        db.insert_distributed_data(data_packer.get_package(), True, 6)
 
     thread_schedule()
     main_connection(Database())
