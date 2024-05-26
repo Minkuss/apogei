@@ -84,7 +84,6 @@ class AuthorisationRegistration(QDialog):
             self.users_data = []
         # print(self.users_data)
 
-
     def check_line_edits(self):
         """Check line edits if they clear or not."""
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
@@ -95,7 +94,6 @@ class AuthorisationRegistration(QDialog):
         """Set edit line style sheet."""
         self.ui.lineEdit.setStyleSheet(styleSheet.get_line_edit_style_sheet(theme))
         self.ui.lineEdit_2.setStyleSheet(styleSheet.get_line_edit_style_sheet(theme))
-
 
     def set_dialog_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set dialog  style sheet."""
@@ -115,6 +113,7 @@ class AuthorisationRegistration(QDialog):
         self.set_button_box_style_sheet(theme)
         self.set_dialog_style_sheet(theme)
         self.set_label_style_sheet(theme)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

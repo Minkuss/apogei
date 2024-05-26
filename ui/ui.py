@@ -89,7 +89,6 @@ class MyWindow(QMainWindow):
         with open(file_path, 'w') as file:
             json.dump(self.json_data, file, indent=4)
 
-
     def export_excel(self):
         """Export excel."""
         self.data.to_excel('..\\output.xlsx', index=False)
@@ -126,7 +125,6 @@ class MyWindow(QMainWindow):
         self.set_main_window_style_sheet(theme)
         self.get_action_style_sheet(theme)
         self.set_graphic_widget_style_sheet(theme)
-
 
     def fill_table(self) -> None:
         """Fill table with data."""
@@ -199,7 +197,7 @@ class MyWindow(QMainWindow):
         """Set graphic widget style sheet."""
         self.ui.graphic.setStyleSheet(styleSheet.get_graphic_style_sheet(theme))
         if theme == styleSheet.Theme.Dark:
-            color = QColor(103,187,198)
+            color = QColor(103, 187, 198)
             self.plot_widget.setBackground(color)
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Белый цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Белый цвет оси
@@ -208,7 +206,7 @@ class MyWindow(QMainWindow):
             dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
             dawn_axis.setTextPen(QColor(0, 0, 0))
         else:
-            color = QColor(255,255,255)
+            color = QColor(255, 255, 255)
             self.plot_widget.setBackground(color)
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
@@ -266,7 +264,6 @@ class MyWindow(QMainWindow):
             # Извлечение времени из объектов datetime
             times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
             values = self.data[cases[selected_case]].tolist()  # Извлечение численных значений
-            axis = pg.DateAxisItem()
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
@@ -319,8 +316,6 @@ class MyWindow(QMainWindow):
         self.fill_table()
         self.export_excel()
 
-
-
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
         self.ui.pushButton.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
@@ -337,7 +332,6 @@ class MyWindow(QMainWindow):
     def set_table_widget_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set table style sheet."""
         self.ui.tableWidget.setStyleSheet(styleSheet.get_table_widget_style_sheet(theme))
-
 
     def set_combo_box_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set combo box style sheet."""

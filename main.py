@@ -37,5 +37,9 @@ def thread_schedule() -> None:
 
 if __name__ == '__main__':
     """Entry point."""
+    db = Database()
+    db.clear()
+    db.insert_fake_data(120)
+
     thread_schedule()
     main_connection(Database())
