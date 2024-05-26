@@ -218,6 +218,7 @@ class MyWindow(QMainWindow):
             self.plot_widget.setAxisItems({'bottom': axis})
             self.plot_widget.clear()
             self.plot_widget.plot(times, values, pen='b')
+            self.plot_widget.getPlotItem().vb.autoRange()
         else:
             self.ui.dates.hide()
             times_datetime = self.data['timestamp'].dt.to_pydatetime()
@@ -229,6 +230,7 @@ class MyWindow(QMainWindow):
             self.plot_widget.setAxisItems({'bottom': axis})
             self.plot_widget.clear()
             self.plot_widget.plot(times, values, pen='b')
+            self.plot_widget.getPlotItem().vb.autoRange()
 
 
     @staticmethod
