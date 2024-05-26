@@ -211,7 +211,7 @@ class MyWindow(QMainWindow):
             times_datetime = filtered_data['timestamp'].dt.to_pydatetime()
 
             # Извлечение времени из объектов datetime
-            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
+            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в timestamp
             values = filtered_data[cases[selected_case]].tolist()  # Извлечение численных значений
             axis = pg.DateAxisItem()
             self.plot_widget.setBackground('w')
