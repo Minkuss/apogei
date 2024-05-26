@@ -163,6 +163,6 @@ cython_debug/
 .idea/
 /ui/mydb.db
 /connection/server/mydb.db
-/ui/mydb.db
 /mydb.db
 /output.xlsx
+/users.json

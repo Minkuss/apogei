@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 
 from database.Sensors.Sensors import HumiditySensor, TempSensor, PressureSensor
 
@@ -44,6 +45,45 @@ class Database(object):
                 print(e.args)
                 conn.rollback()
 
+    def insert_distributed_data(self, data: list[list[float]], with_noise: bool = False, samples: int = 4):
+        """
+        Evenly distribute data with half of hour intervals.
+
+        :param data: lisf of rows to distribute
+        :param with_noise: if True make new data with normal noise
+        :param samples: shows how many times the data set will increase
+        :return: None
+        """
+        insert_data = data.copy()
+        now = datetime.datetime.now()
+
+        if with_noise:
+            noise_data = []
+            for row in data:
+                noise_data += self.add_noise(row, samples)
+            insert_data = noise_data
+
+        start_time = now - datetime.timedelta(minutes=30 * (len(insert_data) // 2))
+        for row in insert_data:
+            self.insert([start_time] + row)
+            start_time += datetime.timedelta(minutes=30)
+
+    @staticmethod
+    def add_noise(data: list[float], samples: int) -> list[list[float]]:
+        """
+        Make new rows with normal noise.
+
+        :param data: initial row
+        :param samples: how many samples will be created
+        :return: data with normal noise
+        """
+        data = np.array(data)
+        noise_data = []
+        for i in range(samples):
+            noise_row = data + np.random.normal(0, 2, len(data))
+            noise_data.append(noise_row.round(2).tolist())
+        return noise_data
+
     def insert_fake_data(self, count: int):
         """
         Insert sensor values into table.
@@ -51,14 +91,13 @@ class Database(object):
         :param count: list where first value is datetime and other 6 is float
         :return: None
         """
-
-        assert count > 0, "Number of rows must be positive"
+        assert count > 0, 'Number of rows must be positive'
 
         sensors: list = [HumiditySensor(), TempSensor(), PressureSensor()]
 
         for i in range(count):
-            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)]
-                                                       + [round(sensor.value, 2) for sensor in sensors])
+            values: list[datetime.datetime | float] = ([datetime.datetime.now() + datetime.timedelta(minutes=i)] +
+                                                       [round(sensor.value, 2) for sensor in sensors])
             self.insert(values)
 
     def select_by_timestamp_range(self, end_time: datetime.datetime, minutes_diff: int):
@@ -103,8 +142,7 @@ class Database(object):
 
         :param age_days: determine how old data will be removed from database
         """
-
-        assert age_days >= 0, "Count of days must be non negative"
+        assert age_days >= 0, 'Count of days must be non negative'
 
         threshold = datetime.datetime.now() - datetime.timedelta(days=age_days)
         query = delete(self.__sensors).where(self.__sensors.c['timestamp'] <= threshold)
@@ -112,14 +150,21 @@ class Database(object):
             conn.execute(query)
             conn.commit()
 
+    def clear(self):
+        """Delete all data from database."""
+        with self.__engine.connect() as conn:
+            conn.execute(delete(self.__sensors))
+            conn.commit()
+
 
 def main() -> None:
     """Entry point."""
     db: Database = Database(echo=False)
-    db.clear_old_data(0)
-    db.insert_fake_data(12)
+    db.clear()
+    data = np.random.uniform(low=-15, high=15, size=(4, 6)).round(2).tolist()
+    db.insert_distributed_data(data, with_noise=True, samples=10)
     data = db.select_all_as_dict()
-    print(*data, sep='\n')
+    print(*data, len(data), sep='\n')
 
 
 if __name__ == '__main__':

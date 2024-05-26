@@ -57,7 +57,7 @@ def get_table_widget_style_sheet(theme: Theme) -> str:
         return (
             """
                 QTableWidget {
-                    background-color: rgb(197,236,241); /* Фон свободного пространства */
+                    background-color: rgb(255,255,255); /* Фон свободного пространства */
                 }
                 QTableWidget QTableCornerButton::section {
                     background-color: rgb(103,187,198); /* Фон угловой ячейки */
@@ -122,10 +122,34 @@ def get_main_window_style_sheet(theme: Theme) -> str:
         )
     else:
         return (
-            'background-color: rgb(197,236,241);'  # Light theme background color
+            'background-color: rgb(255,255,255);'  # Light theme background color
             'color: black;'  # Light theme text color
         )
 
+def get_graphic_style_sheet(theme: Theme) -> str:
+    """Get style sheet for graphic QWidget."""
+    if theme == Theme.Dark:
+        return (
+            """
+            QWidget {
+                border: none; /* Без границы */
+                background: none; /* Без фона */
+                color: white; /* Цвет текста */
+                text-decoration: underline; /* Подчеркивание текста */
+            }
+            """
+        )
+    else:
+        return (
+            """
+            QWidget {
+                border: none; /* Без границы */
+                background: none; /* Без фона */
+                color: black; /* Цвет текста */
+                text-decoration: underline; /* Подчеркивание текста */
+            }
+            """
+        )
 
 def get_action_style_sheet(theme: Theme) -> str:
     """Get action style sheet."""
@@ -160,10 +184,10 @@ def get_action_style_sheet(theme: Theme) -> str:
         return (
             """
             QMenuBar {
-                background-color: rgb(197, 236, 241); /* Цвет фона */
+                background-color: rgb(255, 255, 255); /* Цвет фона */
             }
             QMenuBar::item {
-                background-color: rgb(197, 236, 241); /* Цвет фона элементов */
+                background-color: rgb(255, 255, 255); /* Цвет фона элементов */
                 color: rgb(0,0,0); /* Цвет текста элементов */
             }
             QMenuBar::item:selected  {
@@ -174,7 +198,7 @@ def get_action_style_sheet(theme: Theme) -> str:
                 background-color: rgb(103,187,198); /* Цвет фона */
             }
             QMenu::item {
-                background-color: rgb(197, 236, 241); /* Цвет фона элементов */
+                background-color: rgb(255, 255, 255); /* Цвет фона элементов */
                 color: rgb(0,0,0); /* Цвет текста элементов */
             }
             QMenu::item:selected {

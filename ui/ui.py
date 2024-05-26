@@ -1,15 +1,18 @@
 import sys
 import time
 from datetime import datetime
-
 import socket
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox
+
+from PySide6.QtGui import QColor, QIcon, QPen
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout
 from pandas import DataFrame, to_datetime, read_excel
+import pyqtgraph as pg
 
 import styleSheet
-from Apogei_ui import Ui_MainWindow
-from Ip_Port_change_code import ChangeConnectionData
+from apogei_ui import Ui_MainWindow
+from change_ip_port_code import ChangeConnectionData
 from connection.client.client import get_data_from_server
+import json
 
 
 class MyWindow(QMainWindow):
@@ -45,20 +48,31 @@ class MyWindow(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.update_data)
         self.ui.dateEdit_2.setDate(datetime.now())
         self.ui.dateEdit.setDate(self.ui.dateEdit_2.date().addDays(-7))
-        self.setMaximumWidth(447)
+        self.ui.dates.currentIndexChanged.connect(self.update_graph)
+        self.ui.graphic_type.currentIndexChanged.connect(self.update_graph)
+        self.ui.comboBox.currentIndexChanged.connect(self.update_graph)
+        self.setMaximumWidth(466)
         self.setMaximumHeight(666)
-        self.setMinimumWidth(447)
+        self.setMinimumWidth(466)
         self.setMinimumHeight(666)
-        self.ip = '192.168.0.12'
+        self.ip = '127.0.0.1'
         self.port = 30033
         self.data: DataFrame = DataFrame()
+        self.ui.dates.clear()
+        self.plot_widget = pg.PlotWidget()
+        self.plot_layout = QVBoxLayout(self.ui.graphic)
+        self.plot_layout.addWidget(self.plot_widget)
+        self.set_graphic_widget_style_sheet(styleSheet.Theme.Dark)
         self.connection_window = None
+        self.json_data = None
+        self.current_user = None
+        self.current_password = None
 
     def show_change_connection_data_window(self):
         """Open connection data window."""
         self.connection_window = ChangeConnectionData()
         self.connection_window.ReturnChange.connect(self.set_new_connection_data)
-        self.connection_window.setTheme(self.theme)
+        self.connection_window.set_theme(self.theme)
         self.connection_window.show()
 
     def set_new_connection_data(self, ip, port):
@@ -66,6 +80,15 @@ class MyWindow(QMainWindow):
         self.ip, self.port = ip, port
         del self.connection_window
         self.connection_window = None
+        file_path = '..\\users.json'
+        for user in self.json_data:
+            if user["username"] == self.current_user and user['password'] == self.current_password:
+                user['ip'] = ip
+                user['port'] = port
+                break
+        with open(file_path, 'w') as file:
+            json.dump(self.json_data, file, indent=4)
+
 
     def export_excel(self):
         """Export excel."""
@@ -102,6 +125,8 @@ class MyWindow(QMainWindow):
         self.set_date_picker_style_sheet(theme)
         self.set_main_window_style_sheet(theme)
         self.get_action_style_sheet(theme)
+        self.set_graphic_widget_style_sheet(theme)
+
 
     def fill_table(self) -> None:
         """Fill table with data."""
@@ -160,6 +185,100 @@ class MyWindow(QMainWindow):
                 self.ui.tableWidget.setItem(row, column, item)
         self.set_table_widget_column_width()
 
+        # Fill combobox with unique dates
+        self.fill_combobox_with_dates()
+
+    def fill_combobox_with_dates(self):
+        """Fill combobox with unique dates from the data."""
+        unique_dates = sorted({dt.strftime('%d/%m/%Y') for dt in self.data['timestamp']})
+        self.ui.dates.clear()
+        self.ui.dates.addItems(unique_dates)
+        self.update_graph()
+
+    def set_graphic_widget_style_sheet(self, theme: styleSheet.Theme) -> None:
+        """Set graphic widget style sheet."""
+        self.ui.graphic.setStyleSheet(styleSheet.get_graphic_style_sheet(theme))
+        if theme == styleSheet.Theme.Dark:
+            color = QColor(103,187,198)
+            self.plot_widget.setBackground(color)
+            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Белый цвет оси
+            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Белый цвет оси
+            left_axis = self.plot_widget.getPlotItem().getAxis('left')  # или 'bottom' для оси x
+            left_axis.setTextPen(QColor(0, 0, 0))
+            dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
+            dawn_axis.setTextPen(QColor(0, 0, 0))
+        else:
+            color = QColor(255,255,255)
+            self.plot_widget.setBackground(color)
+            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
+            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
+            left_axis = self.plot_widget.getPlotItem().getAxis('left')  # или 'bottom' для оси x
+            left_axis.setTextPen(QColor(0, 0, 0))
+            dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
+            dawn_axis.setTextPen(QColor(0, 0, 0))
+
+    def update_graph(self):
+        cases = {
+            'Температура': 'temperature',
+            'Влажность': 'humidity',
+            'Давление': 'pressure',
+            'Полный спектр': 'full_spectrum',
+            'Инфракрасный спектр': 'infrared_spectrum',
+            'Видимый спектр': 'visible_spectrum',
+        }
+
+        selected_case = self.ui.comboBox.currentText()
+        if selected_case not in cases:
+            return
+
+        if self.ui.graphic_type.currentText() == "График по дню":
+            self.ui.dates.show()
+            selected_date = self.ui.dates.currentText()
+            if not selected_date:
+                return
+
+            # Фильтруем данные по выбранной дате
+            filtered_data = self.data[self.data['timestamp'].dt.strftime('%d/%m/%Y') == selected_date]
+
+            if filtered_data.empty:
+                return
+
+            # Получаем данные для графика
+            times_datetime = filtered_data['timestamp'].dt.to_pydatetime()
+
+            # Извлечение времени из объектов datetime
+            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в timestamp
+            values = filtered_data[cases[selected_case]].tolist()  # Извлечение численных значений
+            axis = pg.DateAxisItem()
+            self.plot_widget.setAxisItems({'bottom': axis})
+            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
+            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
+            left_axis = self.plot_widget.getPlotItem().getAxis('left')  # или 'bottom' для оси x
+            left_axis.setTextPen(QColor(0, 0, 0))
+            dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
+            dawn_axis.setTextPen(QColor(0, 0, 0))
+            self.plot_widget.clear()
+            self.plot_widget.plot(times, values, pen='k')
+            self.plot_widget.getPlotItem().vb.autoRange()
+        else:
+            self.ui.dates.hide()
+            times_datetime = self.data['timestamp'].dt.to_pydatetime()
+            # Извлечение времени из объектов datetime
+            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
+            values = self.data[cases[selected_case]].tolist()  # Извлечение численных значений
+            axis = pg.DateAxisItem()
+            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
+            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
+            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
+            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
+            left_axis = self.plot_widget.getPlotItem().getAxis('left')  # или 'bottom' для оси x
+            left_axis.setTextPen(QColor(0, 0, 0))
+            dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
+            dawn_axis.setTextPen(QColor(0, 0, 0))
+            self.plot_widget.clear()
+            self.plot_widget.plot(times, values, pen='k')
+            self.plot_widget.getPlotItem().vb.autoRange()
+
     @staticmethod
     def remove_duplicate(mylist: list) -> list:
         """Remove duplicates from sensors list."""
@@ -200,6 +319,8 @@ class MyWindow(QMainWindow):
         self.fill_table()
         self.export_excel()
 
+
+
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
         self.ui.pushButton.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
@@ -217,9 +338,12 @@ class MyWindow(QMainWindow):
         """Set table style sheet."""
         self.ui.tableWidget.setStyleSheet(styleSheet.get_table_widget_style_sheet(theme))
 
+
     def set_combo_box_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set combo box style sheet."""
         self.ui.comboBox.setStyleSheet(styleSheet.get_combo_box_style_sheet(theme))
+        self.ui.graphic_type.setStyleSheet(styleSheet.get_combo_box_style_sheet(theme))
+        self.ui.dates.setStyleSheet(styleSheet.get_combo_box_style_sheet(theme))
 
     def set_date_picker_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set date picker style sheet."""
