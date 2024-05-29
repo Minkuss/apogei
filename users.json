@@ -1,0 +1,44 @@
+[
+    {
+        "username": "dd",
+        "password": "cc",
+        "ip": "1243",
+        "port": 43
+    },
+    {
+        "username": "ff",
+        "password": "cc",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+    {
+        "username": "fe",
+        "password": "fr",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+    {
+        "username": "fr",
+        "password": "gt",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+    {
+        "username": "\u043a\u0430",
+        "password": "\u0430\u043a",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+    {
+        "username": "cc",
+        "password": "dd",
+        "ip": "127.0.0.1",
+        "port": 30033
+    },
+        {
+        "username": "Egorik",
+        "password": "Top",
+        "ip": "127.0.0.1",
+        "port": 30033
+    }
+]
