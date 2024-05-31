@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import socket
 
-from PySide6.QtGui import QColor, QIcon, QPen
+from PySide6.QtGui import QColor, QIcon, QPen, QFont
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout
 from pandas import DataFrame, to_datetime, read_excel
 import pyqtgraph as pg
@@ -243,11 +243,13 @@ class MyWindow(QMainWindow):
 
             # Получаем данные для графика
             times_datetime = filtered_data['timestamp'].dt.to_pydatetime()
-
+            self.plot_widget.clear()
             # Извлечение времени из объектов datetime
             times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в timestamp
             values = filtered_data[cases[selected_case]].tolist()  # Извлечение численных значений
-            axis = pg.DateAxisItem()
+            axis = pg.DateAxisItem(orientation='bottom')
+            axis.setTickSpacing(major=3600 * 24, minor=3600)  # Настройка основных и дополнительных меток
+            axis.setStyle(tickTextOffset=10, tickFont=QFont("Arial", 10), autoExpandTextSpace=True)
             self.plot_widget.setAxisItems({'bottom': axis})
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
@@ -255,15 +257,32 @@ class MyWindow(QMainWindow):
             left_axis.setTextPen(QColor(0, 0, 0))
             dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
             dawn_axis.setTextPen(QColor(0, 0, 0))
-            self.plot_widget.clear()
+            match self.ui.comboBox.currentText():
+                case 'Температура':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Температура', units='°C')
+                case 'Влажность':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Влажность', units='%')
+                case 'Давление':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Давление', units='hPa')
+                case 'Полный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Полный спектр', units='counts')
+                case 'Инфракрасный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Инфракрасный спектр', units='counts')
+                case 'Видимый спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Видимый спектр', units='counts')
             self.plot_widget.plot(times, values, pen='k')
             self.plot_widget.getPlotItem().vb.autoRange()
         else:
             self.ui.dates.hide()
+            self.plot_widget.clear()
             times_datetime = self.data['timestamp'].dt.to_pydatetime()
             # Извлечение времени из объектов datetime
             times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
             values = self.data[cases[selected_case]].tolist()  # Извлечение численных значений
+            axis = pg.DateAxisItem(orientation='bottom')
+            axis.setTickSpacing(major=3600 * 24, minor=3600)  # Настройка основных и дополнительных меток
+            axis.setStyle(tickTextOffset=10, tickFont=QFont("Arial", 10), autoExpandTextSpace=True)
+            self.plot_widget.setAxisItems({'bottom': axis})
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
@@ -272,7 +291,19 @@ class MyWindow(QMainWindow):
             left_axis.setTextPen(QColor(0, 0, 0))
             dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
             dawn_axis.setTextPen(QColor(0, 0, 0))
-            self.plot_widget.clear()
+            match self.ui.comboBox.currentText():
+                case 'Температура':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Температура', units='°C')
+                case 'Влажность':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Влажность', units='%')
+                case 'Давление':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Давление', units='hPa')
+                case 'Полный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Полный спектр', units='counts')
+                case 'Инфракрасный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Инфракрасный спектр', units='counts')
+                case 'Видимый спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Видимый спектр', units='counts')
             self.plot_widget.plot(times, values, pen='k')
             self.plot_widget.getPlotItem().vb.autoRange()
 
