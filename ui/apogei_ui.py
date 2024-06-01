@@ -25,18 +25,16 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(466, 666)
+        MainWindow.resize(466, 696)
         self.action = QAction(MainWindow)
         self.action.setObjectName(u"action")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.widget = QWidget(self.centralwidget)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(10, 11, 441, 311))
-        self.gridLayout_2 = QGridLayout(self.widget)
+        self.gridLayout_3 = QGridLayout(self.centralwidget)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_2 = QPushButton(self.widget)
+        self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
 
         self.gridLayout_2.addWidget(self.pushButton_2, 0, 0, 1, 1)
@@ -47,7 +45,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label = QLabel(self.widget)
+        self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -57,9 +55,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.label)
 
-        self.dateEdit = QDateEdit(self.widget)
+        self.dateEdit = QDateEdit(self.centralwidget)
         self.dateEdit.setObjectName(u"dateEdit")
-        self.dateEdit.setDateTime(QDateTime(QDate(2023, 12, 29), QTime(22, 0, 0)))
+        self.dateEdit.setDateTime(QDateTime(QDate(2023, 12, 29), QTime(12, 0, 0)))
 
         self.horizontalLayout_2.addWidget(self.dateEdit)
 
@@ -68,16 +66,16 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.label_2 = QLabel(self.widget)
+        self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
         sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
 
         self.horizontalLayout.addWidget(self.label_2)
 
-        self.dateEdit_2 = QDateEdit(self.widget)
+        self.dateEdit_2 = QDateEdit(self.centralwidget)
         self.dateEdit_2.setObjectName(u"dateEdit_2")
-        self.dateEdit_2.setDateTime(QDateTime(QDate(2024, 3, 31), QTime(22, 0, 0)))
+        self.dateEdit_2.setDateTime(QDateTime(QDate(2024, 3, 31), QTime(12, 0, 0)))
 
         self.horizontalLayout.addWidget(self.dateEdit_2)
 
@@ -89,12 +87,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.pushButton = QPushButton(self.widget)
+        self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
 
         self.verticalLayout_2.addWidget(self.pushButton)
 
-        self.pushButton_3 = QPushButton(self.widget)
+        self.pushButton_3 = QPushButton(self.centralwidget)
         self.pushButton_3.setObjectName(u"pushButton_3")
 
         self.verticalLayout_2.addWidget(self.pushButton_3)
@@ -105,12 +103,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 1, 2, 1)
 
-        self.comboBox = QComboBox(self.widget)
+        self.comboBox = QComboBox(self.centralwidget)
         self.comboBox.setObjectName(u"comboBox")
 
         self.gridLayout_2.addWidget(self.comboBox, 1, 0, 1, 1)
 
-        self.tableWidget = QTableWidget(self.widget)
+        self.tableWidget = QTableWidget(self.centralwidget)
         self.tableWidget.setObjectName(u"tableWidget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
@@ -120,32 +118,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.tableWidget, 2, 0, 1, 2)
 
-        self.widget1 = QWidget(self.centralwidget)
-        self.widget1.setObjectName(u"widget1")
-        self.widget1.setGeometry(QRect(10, 330, 441, 301))
-        self.gridLayout = QGridLayout(self.widget1)
+
+        self.gridLayout_3.addLayout(self.gridLayout_2, 0, 0, 1, 1)
+
+        self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.graphic_type = QComboBox(self.widget1)
-        self.graphic_type.addItem("")
-        self.graphic_type.addItem("")
-        self.graphic_type.setObjectName(u"graphic_type")
-        sizePolicy.setHeightForWidth(self.graphic_type.sizePolicy().hasHeightForWidth())
-        self.graphic_type.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout_4.addWidget(self.graphic_type)
-
-        self.dates = QComboBox(self.widget1)
-        self.dates.setObjectName(u"dates")
-
-        self.horizontalLayout_4.addWidget(self.dates)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_4, 0, 0, 1, 1)
-
-        self.graphic = QWidget(self.widget1)
+        self.graphic = QWidget(self.centralwidget)
         self.graphic.setObjectName(u"graphic")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
@@ -154,6 +132,33 @@ class Ui_MainWindow(object):
         self.graphic.setSizePolicy(sizePolicy2)
 
         self.gridLayout.addWidget(self.graphic, 1, 0, 1, 1)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.graphic_type = QComboBox(self.centralwidget)
+        self.graphic_type.addItem("")
+        self.graphic_type.addItem("")
+        self.graphic_type.setObjectName(u"graphic_type")
+        sizePolicy.setHeightForWidth(self.graphic_type.sizePolicy().hasHeightForWidth())
+        self.graphic_type.setSizePolicy(sizePolicy)
+
+        self.horizontalLayout_4.addWidget(self.graphic_type)
+
+        self.dates = QComboBox(self.centralwidget)
+        self.dates.setObjectName(u"dates")
+
+        self.horizontalLayout_4.addWidget(self.dates)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_4, 0, 0, 1, 1)
+
+        self.pushButton_4 = QPushButton(self.centralwidget)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+
+        self.gridLayout.addWidget(self.pushButton_4, 2, 0, 1, 1)
+
+
+        self.gridLayout_3.addLayout(self.gridLayout, 1, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -182,6 +187,7 @@ class Ui_MainWindow(object):
         self.graphic_type.setItemText(0, QCoreApplication.translate("MainWindow", u"\u0413\u0440\u0430\u0444\u0438\u043a \u043f\u043e \u0434\u043d\u044e", None))
         self.graphic_type.setItemText(1, QCoreApplication.translate("MainWindow", u"\u0413\u0440\u0430\u0444\u0438\u043a \u0432\u0441\u0435 \u043d\u0435\u0434\u0435\u043b\u0438", None))
 
+        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"\u0410\u043d\u0430\u043b\u0438\u0437", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438", None))
     # retranslateUi
 
