@@ -30,6 +30,40 @@ def get_btn_style_sheet(theme: Theme) -> str:
                 'color: rgb(0, 0, 0);'
                 '}')
 
+def get_msg_box_style_sheet(theme: Theme) -> str:
+    """Get message box style sheet."""
+    if theme == Theme.Dark:
+        return ('QMessageBox{'
+                'border-radius: 3px;'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 16px;'
+                '}'
+                'QMessageBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(176, 196, 222);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 14px;'
+                '}'
+                'QMessageBox QPushButton:hover{'
+                'background-color: rgb(210, 220, 240);'
+                '}')
+    else:
+        return ('QMessageBox{'
+                'border-radius: 3px;'
+                'background-color: rgb(37,72,91);'
+                'color: rgb(255, 255, 255);'
+                'font-size: 16px;'
+                '}'
+                'QMessageBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 14px;'
+                '}'
+                'QMessageBox QPushButton:hover{'
+                'background-color: rgb(176, 196, 222);'
+                '}')
 
 def get_table_widget_style_sheet(theme: Theme) -> str:
     """Get table style sheet."""

@@ -361,7 +361,7 @@ class MyWindow(QMainWindow):
         self.fill_table()
         self.export_excel()
 
-    def show_analysis(self):
+    def show_analysis(self, theme: styleSheet.Theme):
         if self.data.empty:
             QMessageBox.information(self, 'Таблица пуста', 'Таблица пуста,'
                                                  ' нажмите кнопку "Обновить" чтобы получить данные')
@@ -390,6 +390,7 @@ class MyWindow(QMainWindow):
             # Преобразуем описание в текстовый формат
             analyzed_data_text = analyzed_data_translated.to_string()
             msg_box = QMessageBox()
+            msg_box.setStyleSheet(styleSheet.get_msg_box_style_sheet(theme))
             msg_box.setIcon(QMessageBox.Information)
             msg_box.setText(f"Статистика для колонки '{self.ui.comboBox.currentText()}':\n{analyzed_data_text}\n"
                             f"Хотите сохранить данные о таблице? ")
@@ -430,6 +431,7 @@ class MyWindow(QMainWindow):
             # Add the image to the worksheet
             img = Image('plot.png')
             ws.add_image(img, 'A1')
+
 
 
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
