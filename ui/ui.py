@@ -3,10 +3,14 @@ import time
 from datetime import datetime
 import socket
 
-from PySide6.QtGui import QColor, QIcon, QPen
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout
-from pandas import DataFrame, to_datetime, read_excel
+from PySide6.QtGui import QColor, QIcon, QPen, QFont
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QAbstractItemView, QMessageBox, QVBoxLayout\
+    , QFileDialog
+from pandas import DataFrame, to_datetime, read_excel, ExcelWriter
 import pyqtgraph as pg
+import pyqtgraph.exporters
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image
 
 import styleSheet
 from apogei_ui import Ui_MainWindow
@@ -51,10 +55,7 @@ class MyWindow(QMainWindow):
         self.ui.dates.currentIndexChanged.connect(self.update_graph)
         self.ui.graphic_type.currentIndexChanged.connect(self.update_graph)
         self.ui.comboBox.currentIndexChanged.connect(self.update_graph)
-        self.setMaximumWidth(466)
-        self.setMaximumHeight(666)
-        self.setMinimumWidth(466)
-        self.setMinimumHeight(666)
+        self.ui.pushButton_4.clicked.connect(self.show_analysis)
         self.ip = '127.0.0.1'
         self.port = 30033
         self.data: DataFrame = DataFrame()
@@ -127,6 +128,7 @@ class MyWindow(QMainWindow):
         self.set_graphic_widget_style_sheet(theme)
 
     def fill_table(self) -> None:
+
         """Fill table with data."""
         cases = {
             'Температура': 'temperature',
@@ -243,11 +245,13 @@ class MyWindow(QMainWindow):
 
             # Получаем данные для графика
             times_datetime = filtered_data['timestamp'].dt.to_pydatetime()
-
+            self.plot_widget.clear()
             # Извлечение времени из объектов datetime
             times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в timestamp
             values = filtered_data[cases[selected_case]].tolist()  # Извлечение численных значений
-            axis = pg.DateAxisItem()
+            axis = pg.DateAxisItem(orientation='bottom')
+            axis.setTickSpacing(major=3600 * 24, minor=3600)  # Настройка основных и дополнительных меток
+            axis.setStyle(tickTextOffset=10, tickFont=QFont("Arial", 10), autoExpandTextSpace=True)
             self.plot_widget.setAxisItems({'bottom': axis})
             self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
             self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
@@ -255,25 +259,66 @@ class MyWindow(QMainWindow):
             left_axis.setTextPen(QColor(0, 0, 0))
             dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
             dawn_axis.setTextPen(QColor(0, 0, 0))
-            self.plot_widget.clear()
+            match self.ui.comboBox.currentText():
+                case 'Температура':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Температура', units='°C')
+                case 'Влажность':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Влажность', units='%')
+                case 'Давление':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Давление', units='hPa')
+                case 'Полный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Полный спектр', units='counts')
+                case 'Инфракрасный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Инфракрасный спектр', units='counts')
+                case 'Видимый спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Видимый спектр', units='counts')
             self.plot_widget.plot(times, values, pen='k')
+            self.plot_widget.getPlotItem().showGrid(x=True, y=True, alpha=0.2)
             self.plot_widget.getPlotItem().vb.autoRange()
         else:
             self.ui.dates.hide()
-            times_datetime = self.data['timestamp'].dt.to_pydatetime()
-            # Извлечение времени из объектов datetime
-            times = [dt.timestamp() for dt in times_datetime]  # Преобразование времени в datetime
-            values = self.data[cases[selected_case]].tolist()  # Извлечение численных значений
-            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
-            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
-            self.plot_widget.getPlotItem().getAxis('left').setPen('k')  # Черный цвет оси
-            self.plot_widget.getPlotItem().getAxis('bottom').setPen('k')  # Черный цвет оси
-            left_axis = self.plot_widget.getPlotItem().getAxis('left')  # или 'bottom' для оси x
-            left_axis.setTextPen(QColor(0, 0, 0))
-            dawn_axis = self.plot_widget.getPlotItem().getAxis('bottom')  # или 'bottom' для оси x
-            dawn_axis.setTextPen(QColor(0, 0, 0))
             self.plot_widget.clear()
+
+            times_datetime = self.data['timestamp'].dt.to_pydatetime()
+            times = [dt.timestamp() for dt in times_datetime]
+            values = self.data[cases[selected_case]].tolist()
+
+            axis = pg.DateAxisItem(orientation='bottom')
+            axis.setTickSpacing(major=3600 * 24, minor=3600)
+            axis.setStyle(tickTextOffset=10, tickFont=QFont("Arial", 10), autoExpandTextSpace=True)
+            self.plot_widget.setAxisItems({'bottom': axis})
+
+            # Настройка осей
+            left_axis = self.plot_widget.getPlotItem().getAxis('left')
+            bottom_axis = self.plot_widget.getPlotItem().getAxis('bottom')
+
+            left_axis.setPen('k')
+            bottom_axis.setPen('k')
+
+            left_axis.setTextPen(QColor(0, 0, 0))
+            bottom_axis.setTextPen(QColor(0, 0, 0))
+
+            # Установка метки для оси Y
+            match self.ui.comboBox.currentText():
+                case 'Температура':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Температура', units='°C')
+                case 'Влажность':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Влажность', units='%')
+                case 'Давление':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Давление', units='hPa')
+                case 'Полный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Полный спектр', units='counts')
+                case 'Инфракрасный спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Инфракрасный спектр', units='counts')
+                case 'Видимый спектр':
+                    self.plot_widget.getPlotItem().setLabel('left', 'Видимый спектр', units='counts')
+
             self.plot_widget.plot(times, values, pen='k')
+
+            # Отображение сетки
+            self.plot_widget.getPlotItem().showGrid(x=True, y=True, alpha=0.2)
+
+            # Обновление диапазона видимости
             self.plot_widget.getPlotItem().vb.autoRange()
 
     @staticmethod
@@ -316,11 +361,85 @@ class MyWindow(QMainWindow):
         self.fill_table()
         self.export_excel()
 
+    def show_analysis(self, theme: styleSheet.Theme):
+        if self.data.empty:
+            QMessageBox.information(self, 'Таблица пуста', 'Таблица пуста,'
+                                                 ' нажмите кнопку "Обновить" чтобы получить данные')
+        else:
+            cases = {
+                'Температура': 'temperature',
+                'Влажность': 'humidity',
+                'Давление': 'pressure',
+                'Полный спектр': 'full_spectrum',
+                'Инфракрасный спектр': 'infrared_spectrum',
+                'Видимый спектр': 'visible_spectrum',
+            }
+            analyzed_data = self.data[cases[self.ui.comboBox.currentText()]].describe()
+
+            analyzed_data_translated = analyzed_data.rename(index={
+                'count': 'Количество',
+                'mean': 'Среднее',
+                'std': 'Стандартное отклонение',
+                'min': 'Минимум',
+                '25%': '25-й перцентиль',
+                '50%': 'Медиана',
+                '75%': '75-й перцентиль',
+                'max': 'Максимум'
+            })
+
+            # Преобразуем описание в текстовый формат
+            analyzed_data_text = analyzed_data_translated.to_string()
+            msg_box = QMessageBox()
+            msg_box.setStyleSheet(styleSheet.get_msg_box_style_sheet(theme))
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setText(f"Статистика для колонки '{self.ui.comboBox.currentText()}':\n{analyzed_data_text}\n"
+                            f"Хотите сохранить данные о таблице? ")
+            msg_box.setWindowTitle("Описательная статистика")
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+            # Обрабатываем ответ пользователя
+            response = msg_box.exec_()
+            if response == QMessageBox.Yes:
+                filename, _ = QFileDialog.getSaveFileName(self, "Сохранить файл", "", "Excel Files (*.xlsx)")
+                if filename:
+                    self.export_analysis(analyzed_data_translated, filename, cases[self.ui.comboBox.currentText()])
+                    print("Пользователь выбрал 'Да' и выбрал файл:", filename)
+                else:
+                    print("Пользователь выбрал 'Да', но не выбрал файл")
+            else:
+                print("Пользователь выбрал 'Нет'")
+
+    def export_analysis(self, data, filename, case):
+        self.plot_widget.setBackground("w")
+        exporter = pg.exporters.ImageExporter(self.plot_widget.plotItem)
+        exporter.parameters()['width'] = 800  # Set image width
+        exporter.export('plot.png')
+        describe_df = data
+        if self.theme == styleSheet.Theme.Dark:
+            color = QColor(103, 187, 198)
+            self.plot_widget.setBackground(color)
+
+        # Save describe statistics to Excel
+        with ExcelWriter(filename, engine='openpyxl') as writer:
+            self.data[["timestamp", case]].to_excel(writer, sheet_name="Table_data", index=False)
+            describe_df.to_excel(writer, sheet_name='Describe')
+
+            # Load the workbook and get the active worksheet
+            wb = writer.book
+            ws = wb.create_sheet('Graph')
+
+            # Add the image to the worksheet
+            img = Image('plot.png')
+            ws.add_image(img, 'A1')
+
+
+
     def set_btn_style_sheet(self, theme: styleSheet.Theme) -> None:
         """Set button style sheet."""
         self.ui.pushButton.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
         self.ui.pushButton_2.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
         self.ui.pushButton_3.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
+        self.ui.pushButton_4.setStyleSheet(styleSheet.get_btn_style_sheet(theme))
 
     def set_table_widget_column_width(self) -> None:
         """Set table width."""

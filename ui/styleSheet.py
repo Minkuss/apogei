@@ -31,6 +31,45 @@ def get_btn_style_sheet(theme: Theme) -> str:
                 '}')
 
 
+def get_msg_box_style_sheet(theme: Theme) -> str:
+    """Get message box style sheet."""
+    if theme == Theme.Light:
+        return ('QMessageBox{'
+                'border-radius: 3px;'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 16px;'
+                '}'
+                'QMessageBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(176, 196, 222);'
+                'color: rgb(0, 0, 0);'
+                'font-size: 14px;'
+                '}'
+                'QMessageBox QPushButton:hover{'
+                'background-color: rgb(210, 220, 240);'
+                '}')
+    else:
+        return ('QMessageBox{'
+                'border-radius: 3px;'
+                'background-color: rgb(37,72,91);'
+                'font-size: 16px;'
+                '}'
+                'QMessageBox QLabel{'
+                'background-color: transparent;'
+                'color: rgb(255,255,255);'
+                '}'
+                'QMessageBox QPushButton{'
+                'border-radius: 3px;'
+                'background-color: rgb(103,187,198);'
+                'color: rgb(0,0,0);'
+                'font-size: 14px;'
+                '}'
+                'QMessageBox QPushButton:hover{'
+                'background-color: rgb(176, 196, 222);'
+                '}')
+
+
 def get_table_widget_style_sheet(theme: Theme) -> str:
     """Get table style sheet."""
     if theme == Theme.Dark:
@@ -150,6 +189,7 @@ def get_graphic_style_sheet(theme: Theme) -> str:
             }
             """
         )
+
 
 def get_action_style_sheet(theme: Theme) -> str:
     """Get action style sheet."""
